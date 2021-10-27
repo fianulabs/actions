@@ -1,8 +1,8 @@
-name: setup-gh
-description: Setup GitHub CLI, gh, on GitHub Actions runners
+name: setup-badger
+description: Setup BadgerCorp CLI, badger, on GitHub Actions runners
 inputs:
   version:
-    description: Version of GitHub CLI to install
+    description: Version of BadgerCorp CLI to install
     required: false
     default: 1.2.0
 runs:

@@ -1,5 +1,5 @@
 {
-  "name": "setup-gh",
+  "name": "setup-badger",
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
@@ -10,11 +10,11 @@
     "all": "npm run lint && npm run prepare && npm run test"
   },
   "keywords": [],
-  "homepage": "https://github.com/github-developer/setup-gh",
+  "homepage": "https://github.com/badgercorp/actions",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/github-developer/setup-gh.git"
+    "url": "git+https://github.com/badgercorp/actions.git"
   },
   "dependencies": {
     "@actions/core": "^1.2.6",
