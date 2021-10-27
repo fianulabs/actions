@@ -23,8 +23,8 @@ async function setup() {
   }
 }
 
-module.exports = setup
+module.exports = setup;
 
 if (require.main === module) {
-  setup();
+  setup().then(r => console.log('result: ', r));
 }
