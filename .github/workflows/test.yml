@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
-        version: [1.1.0, 1.0.0]
+        version: [0.0.1]
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -27,19 +27,23 @@ jobs:
       with:
         version: ${{ matrix.version }}
 
-    - name: Capture gh version installed
-      run: |
-        export GH_VERSION=$( gh --version )
-        echo 'GH_VERSION_INSTALLED<<EOF' >> $GITHUB_ENV
-        gh --version >> $GITHUB_ENV
-        echo 'EOF' >> $GITHUB_ENV
+    - name: Test CLI
+      run: |-
+        main
 
-    - name: Verify
-      shell: python
-      env:
-        GH_VERSION_EXPECTED: ${{ matrix.version }}
-      run: |
-        import sys, os
-        sys.exit(
-            int(not os.environ["GH_VERSION_EXPECTED"] in os.environ["GH_VERSION_INSTALLED"])
-        )
+#    - name: Capture gh version installed
+#      run: |
+#        export GH_VERSION=$( gh --version )
+#        echo 'GH_VERSION_INSTALLED<<EOF' >> $GITHUB_ENV
+#        gh --version >> $GITHUB_ENV
+#        echo 'EOF' >> $GITHUB_ENV
+
+#    - name: Verify
+#      shell: python
+#      env:
+#        GH_VERSION_EXPECTED: ${{ matrix.version }}
+#      run: |
+#        import sys, os
+#        sys.exit(
+#            int(not os.environ["GH_VERSION_EXPECTED"] in os.environ["GH_VERSION_INSTALLED"])
+#        )
