@@ -10,6 +10,9 @@ async function setup() {
 
     // Download the specific version of the tool, e.g. as a tarball/zipball
     const download = getDownloadObject(version);
+
+    console.log('download: ', download);
+
     const pathToTarball = await tc.downloadTool(download.url);
 
     console.log('path to tarball: ', pathToTarball);
