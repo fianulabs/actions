@@ -18,6 +18,7 @@ jobs:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
         version: [0.0.1]
+        authorization: ${{ secrets.ACCESS_TOKEN }}
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -26,6 +27,7 @@ jobs:
       uses: ./
       with:
         version: ${{ matrix.version }}
+        authorization: ${{ matrix.authorization }}
 
     - name: Test CLI
       run: |-

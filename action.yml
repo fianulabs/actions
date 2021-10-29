@@ -5,6 +5,9 @@ inputs:
     description: Version of BadgerCorp CLI to install
     required: false
     default: 1.2.0
+  authorization:
+    description: Authorization to Download Badgercorp CLI
+    required: true
 runs:
   using: node12
   main: dist/index.js
