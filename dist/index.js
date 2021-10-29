@@ -72,7 +72,7 @@ function mapOS(os) {
 
 function getDownloadObject(version) {
   const platform = os.platform();
-  const filename = `gh_${ version }_${ mapOS(platform) }_${ mapArch(os.arch()) }`;
+  const filename = `cli-badgercorp-${ version }`;
   const extension = platform === 'win32' ? 'zip' : 'tar.gz';
   const binPath = platform === 'win32' ? 'bin' : path.join(filename, 'bin');
   const url = `https://github.com/badgercorp/cli-badgercorp/archive/refs/tags/${ version }.${ extension }`;
