@@ -13,9 +13,8 @@ async function setup() {
     const download = getDownloadObject(version);
 
     console.log('download: ', download);
-    console.log('auth: ', auth);
 
-    const pathToTarball = await tc.downloadTool(download.url, "", auth);
+    const pathToTarball = await tc.downloadTool(download.url, "", `Bearer ${auth}`);
 
     console.log('path to tarball: ', pathToTarball);
 
