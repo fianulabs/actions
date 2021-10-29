@@ -19,9 +19,14 @@ async function setup() {
     const download = getDownloadObject(version);
     const pathToTarball = await tc.downloadTool(download.url);
 
+    console.log('path to tarball: ', pathToTarball);
+
     // Extract the tarball/zipball onto host runner
     const extract = download.url.endsWith('.zip') ? tc.extractZip : tc.extractTar;
+
     const pathToCLI = await extract(pathToTarball);
+
+    console.log('adding: ', pathToCLI, ' to ', download.binPath);
 
     // Expose the tool by adding it to the PATH
     core.addPath(path.join(pathToCLI, download.binPath));
@@ -70,7 +75,7 @@ function getDownloadObject(version) {
   const filename = `gh_${ version }_${ mapOS(platform) }_${ mapArch(os.arch()) }`;
   const extension = platform === 'win32' ? 'zip' : 'tar.gz';
   const binPath = platform === 'win32' ? 'bin' : path.join(filename, 'bin');
-  const url = `https://github.com/cli/cli/releases/download/v${ version }/${ filename }.${ extension }`;
+  const url = `https://github.com/badgercorp/cli-badgercorp/archive/refs/tags/${ version }${ extension }`;
   return {
     url,
     binPath
