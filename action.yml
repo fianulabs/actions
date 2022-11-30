@@ -1,12 +1,12 @@
-name: setup-badger
-description: Setup BadgerCorp CLI, badger, on GitHub Actions runners
+name: setup-fianu
+description: Setup Fianu CLI, on GitHub Actions runners
 inputs:
   version:
-    description: Version of BadgerCorp CLI to install
+    description: Version of Fianu CLI to install
     required: false
-    default: 1.2.0
+    default: 0.0.1
   authorization:
-    description: Authorization to Download Badgercorp CLI
+    description: Authorization to Download Fianu CLI
     required: true
 runs:
   using: node12

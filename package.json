@@ -10,11 +10,11 @@
     "all": "npm run lint && npm run prepare && npm run test"
   },
   "keywords": [],
-  "homepage": "https://github.com/badgercorp/actions",
+  "homepage": "https://github.com/fianulabs/actions",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/badgercorp/actions.git"
+    "url": "git+https://github.com/fianulabs/actions.git"
   },
   "dependencies": {
     "@actions/core": "^1.2.6",
