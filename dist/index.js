@@ -16,12 +16,22 @@ async function setup() {
     // Get version of tool to be installed
     const version = core.getInput('version');
 
-    const pathToCLI = await tc.downloadTool(`https://storage.googleapis.com/fianu-release/${version}/fianu`, "fianu");
+    const url = `https://storage.googleapis.com/fianu-release/${version}/fianu`
+
+    console.log('fetching from url: ', url);
+
+    const pathToCLI = await tc.downloadTool(url, "fianu");
 
     // Execute the 'ls' command and save the output to a variable
     execSync(`chmod +x fianu`)
+
+    let test = execSync(`./fianu`);
+    console.log(test.toString());
+
     execSync(`mkdir -p cli-${version}`);
     execSync(`mv fianu cli-${version}`)
+
+
 
     console.log('adding: ', pathToCLI, ' to ', `cli-${version}`);
 
