@@ -24,6 +24,8 @@ async function setup() {
     // Execute the 'ls' command and save the output to a variable
     let output = execSync('chmod +x fianu');
     console.log(output.toString());
+    output = execSync('which git');
+    console.log(output.toString());
     output = execSync('./fianu');
     console.log(output.toString());
 
