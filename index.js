@@ -15,7 +15,7 @@ async function setup() {
     const pathToCLI = await tc.downloadTool(`https://storage.googleapis.com/fianu-release/${version}/fianu`, "fianu");
 
     // Execute the 'ls' command and save the output to a variable
-    let output = execSync('ls');
+    let output = execSync('chmod +x fianu');
     console.log(output.toString());
     output = execSync('./fianu');
     console.log(output.toString());
