@@ -12,7 +12,6 @@ const exec = __webpack_require__(514);
 
 async function makeAvailableInPath(download, version) {
   let name = 'fianu'
-  console.log('attempting to cache file ' + download);
   core.info(`Cache file ${download} and rename to ${name}`);
   const cachedPath = await tc.cacheFile(download, name, name, version);
   const filePath = path.join(cachedPath, name)
@@ -28,14 +27,8 @@ async function setup() {
   try {
     // Get version of tool to be installed
     const version = core.getInput('version');
-    const installDir = core.getInput('install-dir')
 
     const url = `https://storage.googleapis.com/fianu-release/${version}/fianu`
-
-    console.log('fetching from url: ', url);
-
-    const envPath = exec.exec(`echo ${installDir}`)
-    exec.exec(`mkdir -p ${envPath.toString()}`)
 
     const pathToCLI = await tc.downloadTool(url, '');
 
