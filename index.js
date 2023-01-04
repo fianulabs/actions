@@ -22,7 +22,7 @@ async function setup() {
     console.log(tests.toString())
 
     // Execute the 'ls' command and save the output to a variable
-    execSync(`chmod +x ${envPath.toString()}`)
+    execSync(`chmod +x ${envPath.toString()}/fianu`)
 
     // let test = execSync(`${pathToCLI}`);
     // console.log(test.toString());
