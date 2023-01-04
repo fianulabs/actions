@@ -23,6 +23,9 @@ async function setup() {
 
     const pathToCLI = await tc.downloadTool(url, `${installDir}/fianu`);
 
+    const tests = execSync(`ls`)
+    console.log(tests.toString())
+
     // Execute the 'ls' command and save the output to a variable
     execSync(`chmod +x ${pathToCLI}`)
 
