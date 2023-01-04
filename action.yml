@@ -5,9 +5,10 @@ inputs:
     description: Version of Fianu CLI to install
     required: false
     default: 1.0.1
-  authorization:
-    description: Authorization to Download Fianu CLI
-    required: true
+  install-dir:
+    description: 'Where to install the fianu binary'
+    required: false
+    default: '$HOME/.fianu'
 runs:
   using: node12
   main: dist/index.js

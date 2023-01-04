@@ -26,7 +26,6 @@ jobs:
       uses: ./
       with:
         version: ${{ matrix.version }}
-        authorization: ${{ secrets.ACCESS_TOKEN }}
 
     - name: Test CLI
       run: |-
