@@ -18,11 +18,11 @@ async function setup() {
 
     const pathToCLI = await tc.downloadTool(url, `${envPath.toString()}/fianu`);
 
-    const tests = execSync(`ls`)
+    const tests = execSync(`ls ${envPath.toString()}`)
     console.log(tests.toString())
 
     // Execute the 'ls' command and save the output to a variable
-    execSync(`chmod +x ${envPath.toString()}/fianu`)
+    // execSync(`chmod +x ${envPath.toString()}/fianu`)
 
     // let test = execSync(`${pathToCLI}`);
     // console.log(test.toString());
