@@ -22,17 +22,14 @@ async function setup() {
     const pathToCLI = await tc.downloadTool(`https://storage.googleapis.com/fianu-release/${version}/fianu`, "fianu");
 
     // Execute the 'ls' command and save the output to a variable
-    let output = execSync('chmod +x fianu');
-    console.log(output.toString());
-    output = execSync('which git');
-    console.log(output.toString());
-    output = execSync('./fianu');
-    console.log(output.toString());
+    execSync(`chmod +x fianu`)
+    execSync(`mkdir -p cli-${version}`);
+    execSync(`mv fianu cli-${version}`)
 
-    console.log('adding: ', pathToCLI, ' to ', 'usr/bin');
+    console.log('adding: ', pathToCLI, ' to ', `cli-${version}`);
 
     // Expose the tool by adding it to the PATH
-    core.addPath(path.join(pathToCLI, download.binPath));
+    core.addPath(path.join(pathToCLI, `cli-${version}`));
   } catch (e) {
     core.setFailed(e);
   }
