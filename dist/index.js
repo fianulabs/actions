@@ -28,7 +28,7 @@ async function setup() {
 
     console.log('adding: ', pathToCLI, ' to ', `cli-${version}`);
 
-    output = execSync(`ls cli-${version}`)
+    let output = execSync(`ls cli-${version}`)
     console.log(output.toString())
 
 
