@@ -37,10 +37,7 @@ async function setup() {
     const envPath = execSync(`echo ${installDir}`)
     execSync(`mkdir -p ${envPath.toString()}`)
 
-    execSync(``)
-
-
-    const pathToCLI = await tc.downloadTool(url, undefined);
+    const pathToCLI = await tc.downloadTool(url, '');
 
     await makeAvailableInPath(pathToCLI)
   } catch (e) {
