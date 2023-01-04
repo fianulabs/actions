@@ -28,9 +28,9 @@ async function setup() {
 
     console.log('adding: ', pathToCLI, ' to ', `cli-${version}`);
 
-    let output = execSync('ls')
-    console.log(output.toString())
     output = execSync(`ls cli-${version}`)
+    console.log(output.toString())
+
 
     // Expose the tool by adding it to the PATH
     core.addPath(path.join(pathToCLI, `cli-${version}`));
