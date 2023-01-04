@@ -24,7 +24,7 @@ async function setup() {
     execSync(`mkdir -p ${envPath.toString()}`)
 
 
-    const pathToCLI = await tc.downloadTool(url, `home/runner/.fianu/fianu`);
+    const pathToCLI = await tc.downloadTool(url, `${envPath.toString()}`);
 
     const tests = execSync(`ls ${envPath.toString()}`)
     console.log(tests.toString())
