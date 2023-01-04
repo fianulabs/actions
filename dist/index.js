@@ -14,21 +14,11 @@ async function setup() {
   try {
     // Get version of tool to be installed
     const version = core.getInput('version');
-    const auth = core.getInput('authorization');
 
     // Download the specific version of the tool, e.g. as a tarball/zipball
     const download = getDownloadObject(version);
 
-    console.log('download: ', download);
-
-    const pathToTarball = await tc.downloadTool(download.url, "", `Bearer ${auth}`);
-
-    console.log('path to tarball: ', pathToTarball);
-
-    // Extract the tarball/zipball onto host runner
-    const extract = download.url.endsWith('.zip') ? tc.extractZip : tc.extractTar;
-
-    const pathToCLI = await extract(pathToTarball);
+    const pathToCLI = await tc.downloadTool(`https://storage.googleapis.com/fianu-release/${version}/fianu`, "");
 
     console.log('adding: ', pathToCLI, ' to ', download.binPath);
 
