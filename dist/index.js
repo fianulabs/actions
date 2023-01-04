@@ -22,9 +22,9 @@ async function setup() {
     const pathToCLI = await tc.downloadTool(`https://storage.googleapis.com/fianu-release/${version}/fianu`, "fianu");
 
     // Execute the 'ls' command and save the output to a variable
-    const output = execSync('ls');
-
-    // Log the output
+    let output = execSync('ls');
+    console.log(output.toString());
+    output = execSync('ls fianu');
     console.log(output.toString());
 
     console.log('adding: ', pathToCLI, ' to ', download.binPath);
