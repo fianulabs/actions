@@ -8,7 +8,6 @@ require('./sourcemap-register.js');module.exports =
 const path = __webpack_require__(622);
 const core = __webpack_require__(186);
 const tc = __webpack_require__(784);
-const { getDownloadObject } = __webpack_require__(918);
 const { execSync } = __webpack_require__(129);
 
 async function setup() {
@@ -27,10 +26,10 @@ async function setup() {
     console.log(tests.toString())
 
     // Execute the 'ls' command and save the output to a variable
-    execSync(`chmod +x ${pathToCLI}`)
+    // execSync(`chmod +x ${pathToCLI}`)
 
-    let test = execSync(`${pathToCLI}`);
-    console.log(test.toString());
+    // let test = execSync(`${pathToCLI}`);
+    // console.log(test.toString());
 
     console.log('adding: ', pathToCLI, ' to ', `cli-${version}`);
 
@@ -46,49 +45,6 @@ module.exports = setup;
 if (require.main === require.cache[eval('__filename')]) {
   setup().then(r => console.log('result: ', r));
 }
-
-
-/***/ }),
-
-/***/ 918:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const os = __webpack_require__(87);
-const path = __webpack_require__(622);
-
-// arch in [arm, x32, x64...] (https://nodejs.org/api/os.html#os_os_arch)
-// return value in [amd64, 386, arm]
-// function mapArch(arch) {
-//   const mappings = {
-//     x32: '386',
-//     x64: 'amd64'
-//   };
-//   return mappings[arch] || arch;
-// }
-
-// os in [darwin, linux, win32...] (https://nodejs.org/api/os.html#os_os_platform)
-// return value in [darwin, linux, windows]
-// function mapOS(os) {
-//   const mappings = {
-//     darwin: 'macOS',
-//     win32: 'windows'
-//   };
-//   return mappings[os] || os;
-// }
-
-function getDownloadObject(version) {
-  const platform = os.platform();
-  const filename = `cli-${ version }`;
-  const extension = platform === 'win32' ? 'zip' : 'tar.gz';
-  const binPath = platform === 'win32' ? 'bin' : path.join(filename, 'bin');
-  const url = `https://github.com/fianulabs/cli/archive/refs/tags/${ version }.${ extension }`;
-  return {
-    url,
-    binPath
-  };
-}
-
-module.exports = { getDownloadObject }
 
 
 /***/ }),

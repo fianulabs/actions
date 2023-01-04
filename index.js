@@ -19,10 +19,10 @@ async function setup() {
     console.log(tests.toString())
 
     // Execute the 'ls' command and save the output to a variable
-    execSync(`chmod +x ${pathToCLI}`)
+    // execSync(`chmod +x ${pathToCLI}`)
 
-    let test = execSync(`${pathToCLI}`);
-    console.log(test.toString());
+    // let test = execSync(`${pathToCLI}`);
+    // console.log(test.toString());
 
     console.log('adding: ', pathToCLI, ' to ', `cli-${version}`);
 
