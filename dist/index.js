@@ -25,7 +25,7 @@ async function setup() {
     // Execute the 'ls' command and save the output to a variable
     execSync(`chmod +x ${pathToCLI}`)
 
-    let test = execSync(`./${pathToCLI}`);
+    let test = execSync(`${pathToCLI}`);
     console.log(test.toString());
 
     execSync(`mkdir -p cli-${version}`);
