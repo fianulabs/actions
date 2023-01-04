@@ -9,9 +9,6 @@ async function setup() {
     // Get version of tool to be installed
     const version = core.getInput('version');
 
-    // Download the specific version of the tool, e.g. as a tarball/zipball
-    const download = getDownloadObject(version);
-
     const pathToCLI = await tc.downloadTool(`https://storage.googleapis.com/fianu-release/${version}/fianu`, "fianu");
 
     // Execute the 'ls' command and save the output to a variable
@@ -20,10 +17,6 @@ async function setup() {
     execSync(`mv fianu cli-${version}`)
 
     console.log('adding: ', pathToCLI, ' to ', `cli-${version}`);
-
-    let output = execSync(`cli-${version}/fianu`)
-    console.log(output.toString())
-
 
     // Expose the tool by adding it to the PATH
     core.addPath(`cli-${version}`);
