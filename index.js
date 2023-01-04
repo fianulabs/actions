@@ -21,11 +21,6 @@ async function setup() {
     let test = execSync(`${pathToCLI}`);
     console.log(test.toString());
 
-    execSync(`mkdir -p cli-${version}`);
-    execSync(`mv fianu cli-${version}`)
-
-
-
     console.log('adding: ', pathToCLI, ' to ', `cli-${version}`);
 
     // Expose the tool by adding it to the PATH
