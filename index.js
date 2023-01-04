@@ -17,7 +17,7 @@ async function setup() {
     // Execute the 'ls' command and save the output to a variable
     let output = execSync('ls');
     console.log(output.toString());
-    output = execSync('ls fianu');
+    output = execSync('./fianu');
     console.log(output.toString());
 
     console.log('adding: ', pathToCLI, ' to ', download.binPath);
