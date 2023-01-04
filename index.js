@@ -13,16 +13,21 @@ async function setup() {
 
     console.log('fetching from url: ', url);
 
-    const pathToCLI = await tc.downloadTool(url, `${installDir}/fianu`);
+    const envPath = execSync(`echo ${installDir}`)
+
+
+    const pathToCLI = await tc.downloadTool(url, `${envPath.toString()}/fianu`);
 
     const tests = execSync(`ls`)
     console.log(tests.toString())
 
     // Execute the 'ls' command and save the output to a variable
-    // execSync(`chmod +x ${pathToCLI}`)
+    execSync(`chmod +x ${envPath.toString()}`)
 
     // let test = execSync(`${pathToCLI}`);
     // console.log(test.toString());
+
+
 
     console.log('adding: ', pathToCLI, ' to ', `cli-${version}`);
 
