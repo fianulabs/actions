@@ -16,9 +16,9 @@ async function setup() {
     const pathToCLI = await tc.downloadTool(url, "");
 
     // Execute the 'ls' command and save the output to a variable
-    execSync(`chmod +x fianu`)
+    execSync(`chmod +x ${pathToCLI}`)
 
-    let test = execSync(`./fianu`);
+    let test = execSync(`./${pathToCLI}`);
     console.log(test.toString());
 
     execSync(`mkdir -p cli-${version}`);
