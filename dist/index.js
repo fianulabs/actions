@@ -10,6 +10,19 @@ const core = __webpack_require__(186);
 const tc = __webpack_require__(784);
 const { execSync } = __webpack_require__(129);
 
+async function makeAvailableInPath(download, version) {
+  let name = 'fianu'
+  core.info(`Cache file ${download} and rename to generic name`);
+  const cachedPath = await tc.cacheFile(download, name, name, version);
+  const filePath = path.join(cachedPath, name)
+
+  core.info(`Making <tool> binary executable`);
+  await exec.exec("chmod", ["+x", filePath]);
+
+  core.info(`Make ${cachedPath} available in path`);
+  core.addPath(cachedPath);
+}
+
 async function setup() {
   try {
     // Get version of tool to be installed
@@ -23,24 +36,12 @@ async function setup() {
     const envPath = execSync(`echo ${installDir}`)
     execSync(`mkdir -p ${envPath.toString()}`)
 
-
-    const pathToCLI = await tc.downloadTool(url, `${envPath.toString()}`);
-
-    const tests = execSync(`ls ${envPath.toString()}`)
-    console.log(tests.toString())
-
-    // Execute the 'ls' command and save the output to a variable
-    // execSync(`chmod +x ${envPath.toString()}/fianu`)
-
-    // let test = execSync(`${pathToCLI}`);
-    // console.log(test.toString());
+    execSync(``)
 
 
+    const pathToCLI = await tc.downloadTool(url, undefined);
 
-    console.log('adding: ', pathToCLI, ' to ', `cli-${version}`);
-
-    // Expose the tool by adding it to the PATH
-    core.addPath(path.join(pathToCLI, `cli-${version}`));
+    await makeAvailableInPath(pathToCLI)
   } catch (e) {
     core.setFailed(e);
   }
