@@ -1,7 +1,6 @@
 const path = require('path');
 const core = require('@actions/core');
 const tc = require('@actions/tool-cache');
-const { getDownloadObject } = require('./lib/utils');
 const { execSync } = require('child_process');
 
 async function setup() {
