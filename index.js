@@ -6,7 +6,7 @@ const { execSync } = require('child_process');
 async function makeAvailableInPath(download, version) {
   let name = 'fianu'
   console.log('attempting to cache file ' + download);
-  core.info(`Cache file ${download} and rename to generic name`);
+  core.info(`Cache file ${download} and rename to ${name}`);
   const cachedPath = await tc.cacheFile(download, name, name, version);
   const filePath = path.join(cachedPath, name)
 
@@ -32,7 +32,7 @@ async function setup() {
 
     const pathToCLI = await tc.downloadTool(url, '');
 
-    await makeAvailableInPath(pathToCLI)
+    await makeAvailableInPath(pathToCLI, version)
   } catch (e) {
     core.setFailed(e);
   }
