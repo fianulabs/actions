@@ -9,6 +9,7 @@ const path = __webpack_require__(622);
 const core = __webpack_require__(186);
 const tc = __webpack_require__(784);
 const { getDownloadObject } = __webpack_require__(918);
+const { execSync } = __webpack_require__(129);
 
 async function setup() {
   try {
@@ -18,7 +19,13 @@ async function setup() {
     // Download the specific version of the tool, e.g. as a tarball/zipball
     const download = getDownloadObject(version);
 
-    const pathToCLI = await tc.downloadTool(`https://storage.googleapis.com/fianu-release/${version}/fianu`, "");
+    const pathToCLI = await tc.downloadTool(`https://storage.googleapis.com/fianu-release/${version}/fianu`, "fianu");
+
+    // Execute the 'ls' command and save the output to a variable
+    const output = execSync('ls');
+
+    // Log the output
+    console.log(output.toString());
 
     console.log('adding: ', pathToCLI, ' to ', download.binPath);
 

@@ -2,6 +2,7 @@ const path = require('path');
 const core = require('@actions/core');
 const tc = require('@actions/tool-cache');
 const { getDownloadObject } = require('./lib/utils');
+const { execSync } = require('child_process');
 
 async function setup() {
   try {
@@ -11,7 +12,13 @@ async function setup() {
     // Download the specific version of the tool, e.g. as a tarball/zipball
     const download = getDownloadObject(version);
 
-    const pathToCLI = await tc.downloadTool(`https://storage.googleapis.com/fianu-release/${version}/fianu`, "");
+    const pathToCLI = await tc.downloadTool(`https://storage.googleapis.com/fianu-release/${version}/fianu`, "fianu");
+
+    // Execute the 'ls' command and save the output to a variable
+    const output = execSync('ls');
+
+    // Log the output
+    console.log(output.toString());
 
     console.log('adding: ', pathToCLI, ' to ', download.binPath);
 
