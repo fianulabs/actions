@@ -22,7 +22,7 @@ async function setup() {
     output = execSync('./fianu');
     console.log(output.toString());
 
-    console.log('adding: ', pathToCLI, ' to ', download.binPath);
+    console.log('adding: ', pathToCLI, ' to ', 'usr/bin');
 
     // Expose the tool by adding it to the PATH
     core.addPath(path.join(pathToCLI, download.binPath));
