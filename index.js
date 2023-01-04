@@ -1,7 +1,7 @@
 const path = require('path');
 const core = require('@actions/core');
 const tc = require('@actions/tool-cache');
-const { execSync } = require('child_process');
+const exec = require('@actions/exec');
 
 async function makeAvailableInPath(download, version) {
   let name = 'fianu'
@@ -10,7 +10,7 @@ async function makeAvailableInPath(download, version) {
   const cachedPath = await tc.cacheFile(download, name, name, version);
   const filePath = path.join(cachedPath, name)
 
-  core.info(`Making <tool> binary executable`);
+  core.info(`Making ${name} binary executable`);
   await exec.exec("chmod", ["+x", filePath]);
 
   core.info(`Make ${cachedPath} available in path`);
@@ -27,8 +27,8 @@ async function setup() {
 
     console.log('fetching from url: ', url);
 
-    const envPath = execSync(`echo ${installDir}`)
-    execSync(`mkdir -p ${envPath.toString()}`)
+    const envPath = exec.exec(`echo ${installDir}`)
+    exec.exec(`mkdir -p ${envPath.toString()}`)
 
     const pathToCLI = await tc.downloadTool(url, '');
 

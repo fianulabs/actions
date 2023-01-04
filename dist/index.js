@@ -8,7 +8,7 @@ require('./sourcemap-register.js');module.exports =
 const path = __webpack_require__(622);
 const core = __webpack_require__(186);
 const tc = __webpack_require__(784);
-const { execSync } = __webpack_require__(129);
+const exec = __webpack_require__(514);
 
 async function makeAvailableInPath(download, version) {
   let name = 'fianu'
@@ -17,7 +17,7 @@ async function makeAvailableInPath(download, version) {
   const cachedPath = await tc.cacheFile(download, name, name, version);
   const filePath = path.join(cachedPath, name)
 
-  core.info(`Making <tool> binary executable`);
+  core.info(`Making ${name} binary executable`);
   await exec.exec("chmod", ["+x", filePath]);
 
   core.info(`Make ${cachedPath} available in path`);
@@ -34,8 +34,8 @@ async function setup() {
 
     console.log('fetching from url: ', url);
 
-    const envPath = execSync(`echo ${installDir}`)
-    execSync(`mkdir -p ${envPath.toString()}`)
+    const envPath = exec.exec(`echo ${installDir}`)
+    exec.exec(`mkdir -p ${envPath.toString()}`)
 
     const pathToCLI = await tc.downloadTool(url, '');
 
