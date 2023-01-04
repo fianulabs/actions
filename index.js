@@ -13,7 +13,7 @@ async function setup() {
 
     console.log('fetching from url: ', url);
 
-    const pathToCLI = await tc.downloadTool(url, "fianu");
+    const pathToCLI = await tc.downloadTool(url, "");
 
     // Execute the 'ls' command and save the output to a variable
     execSync(`chmod +x fianu`)
@@ -29,7 +29,7 @@ async function setup() {
     console.log('adding: ', pathToCLI, ' to ', `cli-${version}`);
 
     // Expose the tool by adding it to the PATH
-    core.addPath(`cli-${version}`);
+    core.addPath(path.join(pathToCLI, `cli-${version}`));
   } catch (e) {
     core.setFailed(e);
   }
