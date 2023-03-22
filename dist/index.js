@@ -129,7 +129,7 @@ async function run () {
 
         // Download requested version
         // const pathToCLI = await downloadCLI(url);
-        const pathToCLI = await tc.downloadTool(url, '');
+        const pathToCLI = await tc.downloadTool(url, 'fianu');
 
         // Add to path
         await makeAvailableInPath(pathToCLI, version)
