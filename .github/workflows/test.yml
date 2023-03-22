@@ -32,7 +32,7 @@ jobs:
       run: |-
         fianu
 
-#    - name: Capture gh version installed
+#    - name: Capture gh version installedd
 #      run: |
 #        export GH_VERSION=$( gh --version )
 #        echo 'GH_VERSION_INSTALLED<<EOF' >> $GITHUB_ENV
