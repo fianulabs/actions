@@ -50,20 +50,3 @@ jobs:
     - name: Test CLI
       run: |-
         fianu
-
-#    - name: Capture gh version installedd
-#      run: |
-#        export GH_VERSION=$( gh --version )
-#        echo 'GH_VERSION_INSTALLED<<EOF' >> $GITHUB_ENV
-#        gh --version >> $GITHUB_ENV
-#        echo 'EOF' >> $GITHUB_ENV
-
-#    - name: Verify
-#      shell: python
-#      env:
-#        GH_VERSION_EXPECTED: ${{ matrix.version }}
-#      run: |
-#        import sys, os
-#        sys.exit(
-#            int(not os.environ["GH_VERSION_EXPECTED"] in os.environ["GH_VERSION_INSTALLED"])
-#        )
