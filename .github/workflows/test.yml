@@ -30,7 +30,7 @@ jobs:
 
     - name: Test CLI
       run: |-
-        cli
+        fianu
 
 #    - name: Capture gh version installed
 #      run: |
