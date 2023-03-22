@@ -7,7 +7,7 @@ require('./sourcemap-register.js');module.exports =
 
 const core = __webpack_require__(186);
 
-const setup = __webpack_require__(92);
+const setup = __webpack_require__(313);
 
 (async () => {
   try {
@@ -19,7 +19,7 @@ const setup = __webpack_require__(92);
 
 /***/ }),
 
-/***/ 92:
+/***/ 313:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 // Node.js core
@@ -115,21 +115,29 @@ async function run () {
 
         switch (platform) {
             case 'linux':
-                url = url + '/cli_linux_' + getArchPath(platform)
+                url = url + '/cli_linux_' + getArchPath(platform) + '/cli'
                 break
             case 'darwin':
-                url = url + '/cli_darwin_' + getArchPath(platform)
+                url = url + '/cli_darwin_' + getArchPath(platform) + '/cli'
                 break
             case 'windows':
-                url = url + '/cli_windows_' + getArchPath(platform)
+                url = url + '/cli_windows_' + getArchPath(platform) + '/cli.exe'
                 break;
         }
 
-        url = url + '/cli' // add binary path
+        let pathToCLI;
 
         // Download requested version
         // const pathToCLI = await downloadCLI(url);
-        const pathToCLI = await tc.downloadTool(url, 'fianu');
+        switch (platform) {
+            case 'linux':
+            case 'darwin':
+                pathToCLI = await tc.downloadTool(url, 'fianu');
+                break;
+            case 'windows':
+                pathToCLI = await tc.downloadTool(url, 'fianu.exe');
+                break;
+        }
 
         // Add to path
         await makeAvailableInPath(pathToCLI, version)
