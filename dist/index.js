@@ -17,7 +17,6 @@ const setup = __webpack_require__(92);
   }
 })();
 
-
 /***/ }),
 
 /***/ 92:
@@ -126,8 +125,11 @@ async function run () {
                 break;
         }
 
+        url = url + '/cli' // add binary path
+
         // Download requested version
-        const pathToCLI = await downloadCLI(url);
+        // const pathToCLI = await downloadCLI(url);
+        const pathToCLI = await tc.downloadTool(url, '');
 
         // Add to path
         await makeAvailableInPath(pathToCLI, version)
