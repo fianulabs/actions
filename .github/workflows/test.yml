@@ -12,13 +12,32 @@ defaults:
     shell: bash
 
 jobs:
+  deptest:
+    name: Test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        version: [1.2.2]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup gh
+        uses: ./
+        with:
+          version: ${{ matrix.version }}
+
+      - name: Test CLI
+        run: |-
+          fianu
   test:
     name: Test
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, darwin-latest]
-        version: [1.2.2, 1.3.0]
+        version: [1.3.0]
     steps:
     - name: Checkout
       uses: actions/checkout@v2
