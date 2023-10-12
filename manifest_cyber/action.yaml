@@ -66,13 +66,11 @@ runs:
         workload_identity_provider: 'projects/68661080711/locations/global/workloadIdentityPools/fianu-github-actions/providers/github'
         service_account: ${{ inputs.fianu-service-account }}
 
-    - name: Extract Sbom Reference
+    - id: 'sbom'
+      name: Extract Sbom Reference
       uses: sergeysova/jq-action@v2
-      env:
-        BOM_PATH: ${{ inputs.bom-ref-path }}
-        INPUT_PATH: ${{ inputs.manifest-cyber-sbom-output }}
       with:
-        cmd: 'jq "$BOM_PATH" "$INPUT_PATH" -r'
+        cmd: 'jq ${{ inputs.bom-ref-path }} ${{ inputs.manifest-cyber-sbom-output }} -r'
 
     - name: Capture Evidence
       shell: bash
@@ -85,7 +83,7 @@ runs:
         
         cosign sign-blob manifest_cyber.json --bundle bundle.json --rekor-url $FIANU_HOST --identity-token=${{ steps.auth.outputs.id_token }} --yes --fulcio-url $FIANU_HOST/ledger/fulcio
         
-        fianu declare --path manifest_cyber.sbom --param bom-ref --set ${{ steps.ref.outputs.value }}
+        fianu declare --path manifest_cyber.sbom --param bom-ref --set ${{ steps.sbom.outputs.value }}
         fianu config declarations
         
         if [ "${{ inputs.bom-ref-path }}" = ".name" ]; then
