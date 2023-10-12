@@ -73,7 +73,7 @@ runs:
         cmd: 'jq ${{ inputs.bom-ref-path }} ${{ inputs.manifest-cyber-sbom-output }} -r'
 
     - name: Capture Evidence
-      uses: shell
+      shell: bash
       env:
         FIANU_HOST: ${{ inputs.fianu-host }}
         FIANU_CLIENT_ID: ${{ inputs.fianu-client-id }}
