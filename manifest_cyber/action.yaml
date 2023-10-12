@@ -66,8 +66,7 @@ runs:
         workload_identity_provider: 'projects/68661080711/locations/global/workloadIdentityPools/fianu-github-actions/providers/github'
         service_account: ${{ inputs.fianu-service-account }}
 
-    - id: 'ref'
-      name: Extract Sbom Reference
+    - name: Extract Sbom Reference
       uses: sergeysova/jq-action@v2
       env:
         BOM_PATH: ${{ inputs.bom-ref-path }}
