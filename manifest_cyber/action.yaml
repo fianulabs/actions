@@ -66,16 +66,16 @@ runs:
         workload_identity_provider: 'projects/68661080711/locations/global/workloadIdentityPools/fianu-github-actions/providers/github'
         service_account: ${{ inputs.fianu-service-account }}
 
-    - name: debug
-      shell: bash
-      run: |-
-        cat manifest_cyber.json
+    - name: Install Cosign
+      uses: sigstore/cosign-installer@main
+      with:
+        cosign-release: 'v2.0.0'
 
     - id: 'sbom'
       name: Extract Sbom Reference
       uses: sergeysova/jq-action@v2
       with:
-        cmd: 'jq .version manifest_cyber.json -r'
+        cmd: 'jq .metadata.component.type ${{ inputs.manifest-cyber-sbom-output }} -r'
 
     - name: Capture Evidence
       shell: bash
