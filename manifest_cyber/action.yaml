@@ -66,6 +66,11 @@ runs:
         workload_identity_provider: 'projects/68661080711/locations/global/workloadIdentityPools/fianu-github-actions/providers/github'
         service_account: ${{ inputs.fianu-service-account }}
 
+    - name: debug
+      shell: bash
+      run: |-
+        cat manifest_cyber.json
+
     - id: 'sbom'
       name: Extract Sbom Reference
       uses: sergeysova/jq-action@v2
