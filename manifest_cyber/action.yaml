@@ -69,8 +69,11 @@ runs:
     - name: Extract Sbom Reference
       uses: sergeysova/jq-action@v2
       id: ref
+      env:
+        BOM_PATH: ${{ inputs.bom-ref-path }}
+        INPUT_PATH: ${{ inputs.manifest-cyber-sbom-output }}
       with:
-        cmd: 'jq "${{ inputs.bom-ref-path }}" "${{ inputs.manifest-cyber-sbom-output }}" -r'
+        cmd: 'jq "$BOM_PATH" "$INPUT_PATH" -r'
 
     - name: Capture Evidence
       shell: bash
