@@ -22,7 +22,7 @@ inputs:
       Reference to the bom ref in the JSON output. This defaults to the path for CycloneDX. For SPDX
       the path is .name
     required: false
-    default: .metadata.component.bom-ref
+    default: .metadata.component.["bom-ref"]
 
   audience:
     description: |
@@ -75,7 +75,7 @@ runs:
       name: Extract Sbom Reference
       uses: sergeysova/jq-action@v2
       with:
-        cmd: 'jq .metadata.component.type ${{ inputs.manifest-cyber-sbom-output }} -r'
+        cmd: 'jq ${{ inputs.bom-ref-path }} ${{ inputs.manifest-cyber-sbom-output }} -r'
 
     - name: Capture Evidence
       shell: bash
