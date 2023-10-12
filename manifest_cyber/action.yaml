@@ -70,7 +70,7 @@ runs:
       name: Extract Sbom Reference
       uses: sergeysova/jq-action@v2
       with:
-        cmd: 'jq ${{ inputs.bom-ref-path }} ${{ inputs.manifest-cyber-sbom-output }} -r'
+        cmd: 'jq .version manifest_cyber.json -r'
 
     - name: Capture Evidence
       shell: bash
