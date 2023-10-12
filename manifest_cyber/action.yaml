@@ -70,7 +70,7 @@ runs:
       uses: sergeysova/jq-action@v2
       id: ref
       with:
-        cmd: 'jq ${{ inputs.bom-ref-path }} ${{ inputs.manifest-cyber-sbom-output }} -r'
+        cmd: 'jq "${{ inputs.bom-ref-path }}" "${{ inputs.manifest-cyber-sbom-output }}" -r'
 
     - name: Capture Evidence
       shell: bash
