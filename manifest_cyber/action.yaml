@@ -97,4 +97,4 @@ runs:
           format_option="--format cyclonedx-json"
         fi
         
-        fianu capture evidence --input bundle.json --type blob --source sbom --resource-uri ${{ inputs.manifest-cyber-host }} --format cyclonedx-json
+        fianu capture evidence --input bundle.json --type blob --source sbom.manifest_cyber --resource-uri ${{ inputs.manifest-cyber-host }} $format_option
