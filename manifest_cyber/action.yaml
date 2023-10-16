@@ -86,7 +86,7 @@ runs:
       run: |-
         fianu root init
         
-        cosign sign-blob manifest_cyber.json --bundle bundle.json --rekor-url $FIANU_HOST --identity-token=${{ steps.auth.outputs.id_token }} --yes --fulcio-url $FIANU_HOST/ledger/fulcio
+        cosign sign-blob ${{ inputs.manifest-cyber-sbom-output }} --bundle bundle.json --rekor-url $FIANU_HOST --identity-token=${{ steps.auth.outputs.id_token }} --yes --fulcio-url $FIANU_HOST/ledger/fulcio
         
         fianu declare --path manifest_cyber.sbom --param bom-ref --set ${{ steps.sbom.outputs.value }}
         fianu config declarations
