@@ -3,9 +3,7 @@ name: Tests
 on:
   push:
     branches:
-    - main
-    - testing
-  pull_request:
+    - codeql_test
 
 defaults:
   run:
