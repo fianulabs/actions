@@ -52,5 +52,6 @@ jobs:
         run: |-
           for output in "${{ steps.analyze.outputs.sarif-output }}"/*.sarif ; do
             echo "codeql sarif output file: $output"
+            echo "  - $(file $output)"
             fianu capture evidence --input "${output}" --type sast --source codeql --verbose
           done
