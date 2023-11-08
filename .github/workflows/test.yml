@@ -1,35 +1,32 @@
 name: Tests
-
 on:
   push:
     branches:
       - codeql_test
-
 defaults:
   run:
     shell: bash
-
 jobs:
   analyze:
     name: Analyze
-
     runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
-
     timeout-minutes: ${{ (matrix.language == 'swift' && 120) || 360 }}
-
     permissions:
       actions: read
       contents: read
       security-events: write
-
     strategy:
       fail-fast: false
       matrix:
         language: [ 'javascript' ]
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Setup Fianu
+        uses: fianulabs/actions@main
+        with:
+          version: ${{ secrets.FIANU_VERSION }}
 
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
@@ -45,3 +42,14 @@ jobs:
         id: analyze
         with:
           category: "/language:${{matrix.language}}"
+
+      - name: Capture Evidence
+        env:
+          FIANU_HOST: https://demo.fianu.io
+          FIANU_CLIENT_ID: ${{ secrets.FIANULABS_CLIENT_ID }}
+          FIANU_CLIENT_SECRET: ${{ secrets.FIANULABS_CLIENT_SECRET }}
+        run: |-
+          for output in "${{ steps.analyze.outputs.sarif-output }}"/*.sarif ; do
+            echo "codeql sarif output file: $output"
+            fianu capture evidence --input "${output}" --type sast --source codeql --verbose
+          done
