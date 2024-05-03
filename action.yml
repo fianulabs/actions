@@ -1,10 +1,10 @@
 name: setup-fianu
-description: Setup Fianu CLI, on GitHub Actions runners
+description: Sets up Fianu CLI on GitHub Actions runners
 inputs:
   version:
     description: Version of Fianu CLI to install
     required: false
-    default: 1.0.1
+    default: 1.9.8
 runs:
   using: node20
   main: dist/index.js
