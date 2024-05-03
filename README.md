@@ -1,30 +1,30 @@
 # :gear: `setup-fianu`
 
 ## About
-This action can be run on `ubuntu-latest`, `windows-latest`, and `macos-latest` GitHub Actions runners, and will install and expose a specified version of the `fianu` CLI on the runner environment.
+
+The `setup-fianu` action facilitates the installation and exposure of a specified version of the `fianu` CLI on GitHub
+Actions runners. It is compatible with `ubuntu-latest`, `windows-latest`, and `macos-latest` runners.
 
 ## Usage
 
-Setup the `gh` CLI:
+To set up the `fianu` CLI, include the following step in your workflow:
 
 ```yaml
 steps:
-- uses: fianulabs/actions@main
+  - uses: fianulabs/actions@main
 ```
 
-A specific version of the `fianu` CLI can be installed:
+You can also specify a particular version of the fianu CLI to install:
 
 ```yaml
 steps:
-- uses: fianulabs/actions@main
-  with:
-    version: ${{ secrets.FIANU_VERSION }}
+  - uses: fianulabs/actions@main
+    with:
+      version: ${{ secrets.FIANU_VERSION }}
 ```
 
 ## Inputs
-The actions supports the following inputs:
 
-- `version`: The version of `fianu` to install, defaulting to `latest`
-
-## License
-[MIT](LICENSE).
+| Name      | Description                          | Default  |
+|-----------|--------------------------------------|----------|
+| `version` | The version of fianu cli to install. | `latest` |
