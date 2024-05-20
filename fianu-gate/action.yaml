@@ -200,4 +200,4 @@ runs:
         FIANU_HOST: ${{ inputs.fianu_host }}
         FIANU_VERSION: ${{ inputs.fianu_version }}
         FIANU_OPTS: ""
-        FIANU_GATE_TRANSACTIONS: ${{ toJSON(steps.fianu_gate.outputs.gate_transactions) }}
+        FIANU_GATE_TRANSACTIONS: ${{ steps.fianu_gate.outputs.gate_transactions }}
