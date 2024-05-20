@@ -106,7 +106,7 @@ runs:
         fi
         
         echo "gate_action=$gate_action" >> "$GITHUB_OUTPUT"
-        echo "::group::fianu gate $gate_action"
+        echo "::group:: fianu gate $gate_action"
         
         gate_target=""
         # set the target type based on whether an artifact or commit hash is specified
@@ -131,8 +131,14 @@ runs:
         fi
         
         echo "Gate: name=${{ inputs.fianu_gate_name }} action=$gate_action target=$gate_target"
+        
         echo "::debug::Gate Command: fianu gate $gate_action --gate ${{ inputs.fianu_gate_name }} $gate_target ${{ inputs.fianu_opts }}"
         
+        echo "### Fianu Gate Command" >> $GITHUB_STEP_SUMMARY
+        echo "```bash" >> $GITHUB_STEP_SUMMARY
+        echo "fianu gate $gate_action --gate ${{ inputs.fianu_gate_name }} $gate_target ${{ inputs.fianu_opts }}" >> $GITHUB_STEP_SUMMARY
+        echo "```" >> $GITHUB_STEP_SUMMARY
+
         # initialize retry parameters
         max_attempts=${{ inputs.max_attempts }}
         retry_wait=${{ inputs.initial_retry_wait }}
@@ -149,17 +155,16 @@ runs:
             echo "fianu gate $gate_action succeeded: ${{ inputs.fianu_gate_name }}"
             transactions_ids=$(fianu gate $gate_action --gate "${{ inputs.fianu_gate_name }}" $gate_target -f json ${{ inputs.fianu_opts }} | sed 's/\x1b\[[0-9;]*m//g' | jq -r '[.[].notes.attestation.parent.uuid]' | tr '\n' ' ' | jq -c)
             echo "transactions_ids=$transactions_ids"
-        
             echo "gate_transactions=$transactions_ids" >> "$GITHUB_OUTPUT"
             echo "gate_result=success" >> "$GITHUB_OUTPUT"
             break
           fi
-        
+          
           echo "::warning:: fianu gate $gate_action attempt $(( attempt + 1 )) of $max_attempts failed - retrying in $retry_wait seconds..."
-
+          
           attempt=$(( attempt + 1 ))
           sleep $retry_wait
-        
+          
           retry_wait=$(echo "$retry_wait * $backoff_factor" | bc)
         done
         
@@ -169,8 +174,8 @@ runs:
           echo "gate_result=failure" >> "$GITHUB_STATE"
           exit 1
         fi
-        
         # TODO: https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#adding-a-job-summary
+        echo "::endgroup::"
       env:
         FIANU_USERNAME: ${{ inputs.fianu_username }}
         FIANU_CLIENT_ID: ${{ inputs.fianu_client_id }}
