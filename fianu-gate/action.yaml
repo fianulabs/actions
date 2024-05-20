@@ -1,14 +1,10 @@
 name: 'Fianu Gate Action'
-
 author: 'Fianu Labs'
-
 description: |
   This action integrates Fianu's gate check into your GitHub workflow, allowing automated enforcement of various compliance, security, and quality gates defined within your Fianu setup. It supports configurable retries with exponential backoff, ensuring robust execution even in cases of temporary issues. Use this action to ensure that your codebase adheres to the necessary standards before proceeding to further stages of your CI/CD pipeline. For more information on gates, refer to the [Fianu Documentation on Gating](https://docs.fianu.io/gating/enforcement).
-
 branding:
   icon: 'shield'
   color: 'yellow'
-
 inputs:
   fianu_gate_name:
     description: 'The name of the gate to be checked'
@@ -97,7 +93,7 @@ runs:
       shell: bash
       run: |
         echo "gate_name=${{ inputs.fianu_gate_name }}" >> "$GITHUB_OUTPUT"
-
+        
         # set the gate action based on the input enforce flag
         if [ "${{ inputs.fianu_gate_enforce }}" == "true" ]; then
           export gate_action="enforce"
@@ -160,17 +156,16 @@ runs:
             break
           fi
           
-          echo "::warning:: fianu gate $gate_action attempt $(( attempt + 1 )) of $max_attempts failed - retrying in $retry_wait seconds..."
+          echo "::warning::fianu gate $gate_action attempt $(( attempt + 1 )) of $max_attempts failed - retrying in $retry_wait seconds..."
           
           attempt=$(( attempt + 1 ))
           sleep $retry_wait
-          
           retry_wait=$(echo "$retry_wait * $backoff_factor" | bc)
         done
         
         # final check if maximum attempts were reached
         if [ $attempt -eq $max_attempts ]; then
-          echo "::error:: fianu gate $gate_action failed after $max_attempts attempts."
+          echo "::error::fianu gate $gate_action failed after $max_attempts attempts."
           echo "gate_result=failure" >> "$GITHUB_STATE"
           exit 1
         fi
