@@ -9,6 +9,10 @@ inputs:
   fianu_gate_name:
     description: 'The name of the gate to be checked'
     required: true
+  fianu_gate_inspect_results:
+    description: 'Whether to inspect the results of the gate check or not'
+    required: false
+    default: 'false'
   fianu_gate_enforce:
     description: 'Whether to enforce the gate or not'
     required: false
@@ -150,14 +154,14 @@ runs:
           if fianu gate $gate_action --gate "${{ inputs.fianu_gate_name }}" $gate_target ${{ inputs.fianu_opts }} 2>/dev/null >/dev/null; then
             echo "fianu gate $gate_action succeeded: ${{ inputs.fianu_gate_name }}"
             transactions_ids=$(fianu gate $gate_action --gate "${{ inputs.fianu_gate_name }}" $gate_target -f json ${{ inputs.fianu_opts }} | sed 's/\x1b\[[0-9;]*m//g' | jq -r '[.[].notes.attestation.parent.uuid]' | tr '\n' ' ' | jq -c)
-            echo "transactions_ids=$transactions_ids"
+            # echo "transactions_ids=$transactions_ids"
             echo "gate_transactions=$transactions_ids" >> "$GITHUB_OUTPUT"
             echo "gate_result=success" >> "$GITHUB_OUTPUT"
             break
           fi
-          
+        
           echo "::warning::fianu gate $gate_action attempt $(( attempt + 1 )) of $max_attempts failed - retrying in $retry_wait seconds..."
-          
+        
           attempt=$(( attempt + 1 ))
           sleep $retry_wait
           retry_wait=$(echo "$retry_wait * $backoff_factor" | bc)
@@ -177,3 +181,24 @@ runs:
         FIANU_CLIENT_SECRET: ${{ inputs.fianu_client_secret }}
         FIANU_HOST: ${{ inputs.fianu_host }}
         FIANU_VERSION: ${{ inputs.fianu_version }}
+
+    # Fianu Inspect Results
+    - name: Fianu Gate Inspect Results
+      id: fianu_gate_inspect_results
+      if: ${{ success() && inputs.fianu_gate_inspect_results == 'true' }}
+      shell: bash
+      run: |
+        transactions=$(echo "${{ steps.fianu_gate.outputs.gate_transactions }}" | jq -rc '.[]' | xargs)
+        echo "Transactions: $transactions"
+        # Iterate over the array
+        for transaction in "${transactions[@]}"; do
+          echo "Inspecting Transaction: $transaction"
+          fianu gate inspect $transaction ${FIANU_OPTS}
+        done
+      env:
+        FIANU_USERNAME: ${{ inputs.fianu_username }}
+        FIANU_CLIENT_ID: ${{ inputs.fianu_client_id }}
+        FIANU_CLIENT_SECRET: ${{ inputs.fianu_client_secret }}
+        FIANU_HOST: ${{ inputs.fianu_host }}
+        FIANU_VERSION: ${{ inputs.fianu_version }}
+        FIANU_OPTS: ""
