@@ -108,11 +108,12 @@ runs:
         echo "gate_action=$gate_action" >> "$GITHUB_OUTPUT"
         echo "::group::fianu gate $gate_action"
         
+        gate_target=""
         # set the target type based on whether an artifact or commit hash is specified
         if [ -n "${{ inputs.fianu_artifact }}" ]; then
           echo "gate_target_type=artifact" >> $GITHUB_OUTPUT
           echo "gate_target=${{ inputs.fianu_artifact }}" >> "$GITHUB_OUTPUT"
-          export gate_target="--artifact ${{ inputs.fianu_artifact }}"
+          export gate_target="$gate_target --artifact ${{ inputs.fianu_artifact }}"
         fi
         
         # add the commit flag if present
@@ -120,7 +121,7 @@ runs:
           echo "gate_target_type=commit" >> $GITHUB_OUTPUT
           echo "gate_target=${{ inputs.fianu_commit }}" >> "$GITHUB_OUTPUT"
           unset FIANU_ARTIFACT FIANU_ARTIFACT_NAME FIANU_ARTIFACT_VERSION
-          export gate_target="--commit ${{ inputs.fianu_commit }}"
+          export gate_target="$gate_target --commit ${{ inputs.fianu_commit }}"
         fi
         
         # add the asset flag if present
