@@ -147,7 +147,7 @@ runs:
         while [ $attempt -lt $max_attempts ]; do
           echo "fianu gate $gate_action attempt $(( attempt + 1 )) of $max_attempts..."
 
-          if fianu gate $gate_action --gate "${{ inputs.fianu_gate_name }}" $gate_target ${{ inputs.fianu_opts }} 2>/dev/null >/dev/null; then
+          if fianu gate $gate_action --gate "${{ inputs.fianu_gate_name }}" $gate_target ${{ inputs.fianu_opts }}; then
             echo "fianu gate $gate_action succeeded: ${{ inputs.fianu_gate_name }}"
             transactions_ids=$(fianu gate $gate_action --gate "${{ inputs.fianu_gate_name }}" $gate_target -f json ${{ inputs.fianu_opts }} | sed 's/\x1b\[[0-9;]*m//g' | jq -r '[.[].notes.attestation.parent.uuid]' | tr '\n' ' ' | jq -c)
             echo "transactions_ids=$transactions_ids"
