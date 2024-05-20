@@ -102,7 +102,7 @@ runs:
         fi
         
         echo "gate_action=$gate_action" >> "$GITHUB_OUTPUT"
-        echo "::group:: fianu gate $gate_action"
+        echo "::group::fianu gate $gate_action"
         
         gate_target=""
         # set the target type based on whether an artifact or commit hash is specified
