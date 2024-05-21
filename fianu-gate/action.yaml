@@ -134,10 +134,10 @@ runs:
         
         echo "::debug::Gate Command: fianu gate $gate_action --gate ${{ inputs.fianu_gate_name }} $gate_target ${{ inputs.fianu_opts }}"
         
-        echo "### Fianu Gate Command" >> $GITHUB_STEP_SUMMARY
-        echo '```bash' >> $GITHUB_STEP_SUMMARY
-        echo "fianu gate $gate_action --gate ${{ inputs.fianu_gate_name }} $gate_target ${{ inputs.fianu_opts }}" >> $GITHUB_STEP_SUMMARY
-        echo '```' >> $GITHUB_STEP_SUMMARY
+        # echo "### Fianu Gate Command" >> $GITHUB_STEP_SUMMARY
+        # echo '```bash' >> $GITHUB_STEP_SUMMARY
+        # echo "fianu gate $gate_action --gate ${{ inputs.fianu_gate_name }} $gate_target ${{ inputs.fianu_opts }}" >> $GITHUB_STEP_SUMMARY
+        # echo '```' >> $GITHUB_STEP_SUMMARY
 
         # initialize retry parameters
         max_attempts=${{ inputs.max_attempts }}
