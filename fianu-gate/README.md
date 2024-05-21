@@ -15,22 +15,23 @@ the [Fianu Documentation on Gating](https://docs.fianu.io/gating/enforcement).
 
 ## Inputs
 
-| Name                  | Description                                                           | Required | Default       |
-|-----------------------|-----------------------------------------------------------------------|----------|---------------|
-| `fianu_client_id`     | Fianu client ID, usually stored in secrets.                           | Yes      |               |
-| `fianu_username`      | Fianu account username, usually stored in secrets.                    | No       |               |
-| `fianu_client_secret` | Fianu client secret, usually stored in secrets.                       | Yes      |               |
-| `fianu_host`          | The Fianu host URL.                                                   | Yes      |               |
-| `fianu_gate_name`     | The name of the gate to be checked.                                   | Yes      |               |
-| `fianu_gate_enforce`  | Whether to enforce the gate.                                          | No       | `false`       |
-| `fianu_opts`          | Additional options for the fianu gate check command.                  | No       | `''`          |
-| `fianu_version`       | The version of the Fianu CLI to use.                                  | No       | `latest`      |
-| `fianu_artifact`      | The artifact name and version to be used in the gate check.           | No       |               |
-| `fianu_asset_uuid`    | The UUID of the asset to be used in the gate check (for commit only). | No       |               |
-| `fianu_commit`        | The commit hash to be used in the gate check.                         | No       | `$GITHUB_SHA` |
-| `max_attempts`        | Maximum number of retry attempts for the gate check command.          | No       | `5`           |
-| `initial_retry_wait`  | Initial wait time in seconds before retrying the command.             | No       | `10`          |
-| `backoff_factor`      | The factor by which the retry wait time will increase.                | No       | `2`           |
+| Name                         | Description                                                           | Required | Default       |
+|------------------------------|-----------------------------------------------------------------------|----------|---------------|
+| `fianu_client_id`            | Fianu client ID, usually stored in secrets.                           | Yes      |               |
+| `fianu_username`             | Fianu account username, usually stored in secrets.                    | No       |               |
+| `fianu_client_secret`        | Fianu client secret, usually stored in secrets.                       | Yes      |               |
+| `fianu_host`                 | The Fianu host URL.                                                   | Yes      |               |
+| `fianu_gate_name`            | The name of the gate to be checked.                                   | Yes      |               |
+| `fianu_gate_enforce`         | Whether to enforce the gate.                                          | No       | `false`       |
+| `fianu_gate_inspect_results` | Whether to inspect the results of the gate check.                     | No       | `false`       |
+| `fianu_opts`                 | Additional options for the fianu gate check command.                  | No       | `''`          |
+| `fianu_version`              | The version of the Fianu CLI to use.                                  | No       | `latest`      |
+| `fianu_artifact`             | The artifact name and version to be used in the gate check.           | No       |               |
+| `fianu_asset_uuid`           | The UUID of the asset to be used in the gate check (for commit only). | No       |               |
+| `fianu_commit`               | The commit hash to be used in the gate check.                         | No       | `$GITHUB_SHA` |
+| `max_attempts`               | Maximum number of retry attempts for the gate check command.          | No       | `5`           |
+| `initial_retry_wait`         | Initial wait time in seconds before retrying the command.             | No       | `10`          |
+| `backoff_factor`             | The factor by which the retry wait time will increase.                | No       | `2`           |
 
 ## Outputs
 
@@ -53,7 +54,7 @@ steps:
   - name: Setup Fianu
     uses: fianulabs/actions@main
     with:
-      version: ${{ inputs.fianu_version }}
+      version: ${{ secrets.FIANU_VERSION }}
 
   - name: Fianu Gate
     uses: fianulabs/actions@fianu-gate-action
@@ -63,7 +64,7 @@ steps:
       fianu_client_id: ${{ secrets.FIANU_CLIENT_ID }}
       fianu_client_secret: ${{ secrets.FIANU_CLIENT_SECRET }}
       fianu_host: https://app.fianu.io
-      fianu_version: '1,9,7'
+      fianu_version: '1.9.7'
       fianu_commit: ${{ github.sha }}
       max_attempts: 3
       initial_retry_wait: 5
