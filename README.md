@@ -25,6 +25,6 @@ steps:
 
 ## Inputs
 
-| Name      | Description                          | Default  |
-|-----------|--------------------------------------|----------|
-| `version` | The version of fianu cli to install. | `latest` |
+| Name      | Description                        | Default  |
+|-----------|------------------------------------|----------|
+| `version` | The version of `fianu` to install. | `latest` |
