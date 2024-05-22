@@ -9,10 +9,6 @@ inputs:
   fianu_gate_name:
     description: 'The name of the gate to be checked'
     required: true
-  fianu_gate_inspect_results:
-    description: 'Whether to inspect the results of the gate check or not'
-    required: false
-    default: 'false'
   fianu_gate_enforce:
     description: 'Whether to enforce the gate or not'
     required: false
@@ -54,7 +50,7 @@ inputs:
   initial_retry_wait:
     description: 'The initial wait time in seconds before retrying the command'
     required: false
-    default: '10'
+    default: '5'
   backoff_factor:
     description: 'The factor by which the retry wait time will increase'
     required: false
@@ -180,24 +176,3 @@ runs:
         FIANU_CLIENT_SECRET: ${{ inputs.fianu_client_secret }}
         FIANU_HOST: ${{ inputs.fianu_host }}
         FIANU_VERSION: ${{ inputs.fianu_version }}
-
-    # Fianu Inspect Results
-    - name: Fianu Gate Inspect Results
-      id: fianu_gate_inspect_results
-      if: ${{ success() && inputs.fianu_gate_inspect_results == 'true' }}
-      shell: bash
-      run: |
-        transactions=$(echo "$FIANU_GATE_TRANSACTIONS" | jq -rc '.[]' | xargs)
-        echo "Transactions: $transactions"
-        for transaction in "${transactions[@]}"; do
-          echo "Inspecting Transaction: $transaction"
-          fianu gate inspect $transaction ${FIANU_OPTS}
-        done
-      env:
-        FIANU_USERNAME: ${{ inputs.fianu_username }}
-        FIANU_CLIENT_ID: ${{ inputs.fianu_client_id }}
-        FIANU_CLIENT_SECRET: ${{ inputs.fianu_client_secret }}
-        FIANU_HOST: ${{ inputs.fianu_host }}
-        FIANU_VERSION: ${{ inputs.fianu_version }}
-        FIANU_OPTS: ""
-        FIANU_GATE_TRANSACTIONS: ${{ steps.fianu_gate.outputs.gate_transactions }}
