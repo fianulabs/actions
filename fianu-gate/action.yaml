@@ -1,0 +1,178 @@
+name: 'Fianu Gate Action'
+author: 'Fianu Labs'
+description: |
+  This action integrates Fianu's gate check into your GitHub workflow, allowing automated enforcement of various compliance, security, and quality gates defined within your Fianu setup. It supports configurable retries with exponential backoff, ensuring robust execution even in cases of temporary issues. Use this action to ensure that your codebase adheres to the necessary standards before proceeding to further stages of your CI/CD pipeline. For more information on gates, refer to the [Fianu Documentation on Gating](https://docs.fianu.io/gating/enforcement).
+branding:
+  icon: 'shield'
+  color: 'yellow'
+inputs:
+  fianu_gate_name:
+    description: 'The name of the gate to be checked'
+    required: true
+  fianu_gate_enforce:
+    description: 'Whether to enforce the gate or not'
+    required: false
+    default: 'false'
+  fianu_opts:
+    description: 'Additional options to pass to the fianu gate check command'
+    required: false
+    default: ''
+  fianu_username:
+    description: 'Fianu account username (usually stored in secrets)'
+    required: false
+  fianu_client_id:
+    description: 'Fianu client ID (usually stored in secrets)'
+    required: true
+  fianu_client_secret:
+    description: 'Fianu client secret (usually stored in secrets)'
+    required: true
+  fianu_host:
+    description: 'The Fianu host URL (usually stored in secrets)'
+    required: true
+  fianu_version:
+    description: 'The version of the Fianu CLI to use'
+    required: false
+    default: 'latest'
+  fianu_artifact:
+    description: 'The artifact name and version to be used in the gate check'
+    required: false
+  fianu_asset_uuid:
+    description: 'The UUID of the asset to be used in the gate check (for commit only)'
+    required: false
+  fianu_commit:
+    description: 'The commit hash to be used in the gate check'
+    required: false
+    default: $GITHUB_SHA
+  max_attempts:
+    description: 'The maximum number of retry attempts for the gate check command'
+    required: false
+    default: '5'
+  initial_retry_wait:
+    description: 'The initial wait time in seconds before retrying the command'
+    required: false
+    default: '5'
+  backoff_factor:
+    description: 'The factor by which the retry wait time will increase'
+    required: false
+    default: '2'
+
+outputs:
+  gate_result:
+    description: 'The result of the gate check or enforcement.'
+    value: ${{ steps.fianu_gate.outputs.gate_result }}
+  gate_name:
+    description: 'The name of the gate that was checked or enforced.'
+    value: ${{ inputs.fianu_gate_name }}
+  gate_action:
+    description: 'The action performed on the gate (check or enforce).'
+    value: ${{ steps.fianu_gate.outputs.gate_action }}
+  gate_target:
+    description: 'The target of the gate check or enforcement (artifact or commit).'
+    value: ${{ steps.fianu_gate.outputs.gate_target }}
+  gate_target_type:
+    description: 'The type of the target (artifact or commit).'
+    value: ${{ steps.fianu_gate.outputs.gate_target_type }}
+  gate_transactions:
+    description: 'The transaction IDs associated with the gate check or enforcement.'
+    value: ${{ toJSON(steps.fianu_gate.outputs.gate_transactions) }}
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Fianu
+      id: setup_fianu
+      uses: fianulabs/actions@main
+      with:
+        version: ${{ inputs.fianu_version }}
+
+    - name: Fianu Gate
+      id: fianu_gate
+      shell: bash
+      run: |
+        echo "gate_name=${{ inputs.fianu_gate_name }}" >> "$GITHUB_OUTPUT"
+        
+        # set the gate action based on the input enforce flag
+        if [ "${{ inputs.fianu_gate_enforce }}" == "true" ]; then
+          export gate_action="enforce"
+        else
+          export gate_action="check"
+        fi
+        
+        echo "gate_action=$gate_action" >> "$GITHUB_OUTPUT"
+        echo "::group::fianu gate $gate_action"
+        
+        gate_target=""
+        # set the target type based on whether an artifact or commit hash is specified
+        if [ -n "${{ inputs.fianu_artifact }}" ]; then
+          echo "gate_target_type=artifact" >> $GITHUB_OUTPUT
+          echo "gate_target=${{ inputs.fianu_artifact }}" >> "$GITHUB_OUTPUT"
+          export gate_target="$gate_target --artifact ${{ inputs.fianu_artifact }}"
+        fi
+        
+        # add the commit flag if present
+        if [ -n "${{ inputs.fianu_commit }}" ]; then
+          echo "gate_target_type=commit" >> $GITHUB_OUTPUT
+          echo "gate_target=${{ inputs.fianu_commit }}" >> "$GITHUB_OUTPUT"
+          unset FIANU_ARTIFACT FIANU_ARTIFACT_NAME FIANU_ARTIFACT_VERSION
+          export gate_target="$gate_target --commit ${{ inputs.fianu_commit }}"
+        fi
+        
+        # add the asset flag if present
+        if [ -n "${{ inputs.fianu_asset_uuid }}" ]; then
+          echo "gate_target_asset_uuid=${{ inputs.fianu_asset_uuid }}" >> "$GITHUB_OUTPUT"
+          export gate_target="$gate_target --asset ${{ inputs.fianu_asset_uuid }}"
+        fi
+        
+        echo "Gate: name=${{ inputs.fianu_gate_name }} action=$gate_action target=$gate_target"
+        
+        echo "::debug::Gate Command: fianu gate $gate_action --gate ${{ inputs.fianu_gate_name }} $gate_target ${{ inputs.fianu_opts }}"
+        
+        # echo "### Fianu Gate Command" >> $GITHUB_STEP_SUMMARY
+        # echo '```bash' >> $GITHUB_STEP_SUMMARY
+        # echo "fianu gate $gate_action --gate ${{ inputs.fianu_gate_name }} $gate_target ${{ inputs.fianu_opts }}" >> $GITHUB_STEP_SUMMARY
+        # echo '```' >> $GITHUB_STEP_SUMMARY
+
+        # initialize retry parameters
+        max_attempts=${{ inputs.max_attempts }}
+        retry_wait=${{ inputs.initial_retry_wait }}
+        backoff_factor=${{ inputs.backoff_factor }}
+        attempt=0
+        
+        sleep 5  # initial delay to allow time for required controls to be evaluated
+
+        # retry logic for gate check or enforcement
+        while [ $attempt -lt $max_attempts ]; do
+          echo "fianu gate $gate_action attempt $(( attempt + 1 )) of $max_attempts..."
+
+          if fianu gate $gate_action --gate "${{ inputs.fianu_gate_name }}" $gate_target ${{ inputs.fianu_opts }} 2>/dev/null >/dev/null; then
+            echo "fianu gate $gate_action succeeded: ${{ inputs.fianu_gate_name }}"
+            transactions_ids=$(fianu gate $gate_action --gate "${{ inputs.fianu_gate_name }}" $gate_target -f json ${{ inputs.fianu_opts }} | sed 's/\x1b\[[0-9;]*m//g' | jq -r '[.[].notes.attestation.parent.uuid]' | tr '\n' ' ' | jq -c)
+            # echo "transactions_ids=$transactions_ids"
+            echo "gate_transactions=$transactions_ids" >> "$GITHUB_OUTPUT"
+            echo "gate_result=success" >> "$GITHUB_OUTPUT"
+            break
+          fi
+        
+          echo "::warning::fianu gate $gate_action attempt $(( attempt + 1 )) of $max_attempts failed - retrying in $retry_wait seconds..."
+          attempt=$(( attempt + 1 ))
+          sleep $retry_wait
+          retry_wait=$(echo "$retry_wait * $backoff_factor" | bc)
+        done
+        
+        # final check if maximum attempts were reached
+        if [ $attempt -eq $max_attempts ]; then
+          echo "::error::fianu gate $gate_action failed after $max_attempts attempts."
+          echo "gate_result=failure" >> "$GITHUB_STATE"
+          exit 1
+        fi
+        # TODO: https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#adding-a-job-summary
+        echo "::endgroup::"
+      env:
+        FIANU_USERNAME: ${{ inputs.fianu_username }}
+        FIANU_CLIENT_ID: ${{ inputs.fianu_client_id }}
+        FIANU_CLIENT_SECRET: ${{ inputs.fianu_client_secret }}
+        FIANU_HOST: ${{ inputs.fianu_host }}
+        FIANU_VERSION: ${{ inputs.fianu_version }}
