@@ -74,7 +74,7 @@ async function run () {
         const arch = mapArch(osArch);
 
         const getArchPath = (k) => {
-            if (k === 'darwin') return 'arm64_v1'
+            if (k === 'darwin') return 'amd64_v1'
             if (arch === 'arm') return 'arm64'
             if (arch === 'amd64') return 'amd64_v1'
             return arch
