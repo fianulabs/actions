@@ -5,6 +5,10 @@ inputs:
     description: Version of Fianu CLI to install
     required: false
     default: 1.9.8
+  architecture:
+    description: Architecture of the runner
+    required: false
+    default: ""
 runs:
   using: node20
   main: dist/index.js
