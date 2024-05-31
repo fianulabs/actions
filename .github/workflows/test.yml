@@ -50,5 +50,4 @@ jobs:
     - name: Test CLI
       run: |-
         uname -s | tr '[:upper:]' '[:lower:]'
-        name -m
         fianu
