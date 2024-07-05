@@ -45,8 +45,8 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - id: 'auth'
-      name: 'Authenticate to Google Cloud'
+    - name: 'Authenticate to Google Cloud'
+      id: auth
       uses: google-github-actions/auth@v2
       with:
         token_format: id_token
@@ -60,13 +60,13 @@ runs:
       with:
         cosign-release: 'v3.5.0'
 
-    - id: 'sbom'
-      name: Extract Sbom Reference
+    - name: Extract Sbom Reference
+      id: sbom
       uses: sergeysova/jq-action@v2
       with:
         cmd: 'jq ${{ inputs.bom-ref-path }} ${{ inputs.manifest-cyber-sbom-output }} -r'
 
-    - name: Capture Evidence
+    - name: Sign and Capture Evidence
       shell: bash
       env:
         FIANU_HOST: ${{ inputs.fianu-host }}
