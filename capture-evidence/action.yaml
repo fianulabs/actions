@@ -75,6 +75,9 @@ runs:
         FIANU_HOST: ${{ inputs.fianu-host }}
         FIANU_CLIENT_ID: ${{ inputs.fianu-client-id }}
         FIANU_CLIENT_SECRET: ${{ inputs.fianu-client-secret }}
+        FIANU_APP_CODE: ${{ inputs.fianu-app-code }}
+        FIANU_USERNAME: ${{ inputs.fianu-username }}
+        FIANU_VERSION: ${{ inputs.fianu-cli-version }}
         BUNDLE_FILE: bundle.json
       run: |-
         # Initialize Cosign with the Fianu Mirror and Root
