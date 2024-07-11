@@ -15,22 +15,26 @@ inputs:
     description: "Fianu Client Secret"
     required: true
   fianu-username:
-    description: "Fianu Username (Optional)"
+    description: "Fianu Username (optional)"
     required: false
+  fianu-asset-token:
+    description: 'Fianu Asset Token associated with the Fianu Asset to which evidence should be associated.'
+    required: false
+    default: ''
   fianu-service-account:
-    description: 'Fianu service account provided to your organization to perform keyless signing.'
+    description: 'Service account identifier for generating credentials and performing keyless signing. Mutually exclusive with "identity-token".'
     required: false
     default: ''
   fianu-debug:
-    description: 'Enable verbose Fianu cli output.'
+    description: 'Enable verbose Fianu CLI output.'
     required: false
     default: 'false'
   identity-token:
-    description: 'Identity token used to authenticate with Fianu'
+    description: 'Identity token for keyless signing. Required if "fianu-service-account" is not specified.'
     required: false
     default: ''
   audience:
-    description: 'Specifies the identity token audience to use when creating an identity token to authenticate with Fianu.'
+    description: 'Identity token audience for generating an identity token to authenticate with Fianu.'
     required: false
     default: sigstore
   evidence:
@@ -59,7 +63,6 @@ runs:
           exit 1
         fi
 
-
     # Authentication Google Cloud CLI
     # Reference: https://github.com/google-github-actions/auth
     - name: Google Cloud Authentication Setup
@@ -76,7 +79,10 @@ runs:
     # Google Cloud CLI Installation
     - name: Google Cloud CLI Installation
       id: setup_gcloud
+      if: steps.gcloud_auth.outcome == 'success'
       uses: google-github-actions/setup-gcloud@v2
+      with:
+        project_id: ${{ steps.gcloud_auth.outputs.project_id }}
 
     # Install Cosign CLI
     # Reference: https://github.com/sigstore/cosign-installer
@@ -93,20 +99,23 @@ runs:
         FIANU_CLIENT_ID: ${{ inputs.fianu-client-id }}
         FIANU_CLIENT_SECRET: ${{ inputs.fianu-client-secret }}
         FIANU_APP_CODE: ${{ inputs.fianu-app-code }}
+        FIANU_ASSET_TOKEN: ${{ inputs.fianu-asset-token }}
         FIANU_USERNAME: ${{ inputs.fianu-username }}
-        FIANU_VERSION: ${{ inputs.fianu-cli-version }}
+        FIANU_FULCIO_URL: ${{ inputs.fianu-host }}/ledger/fulcio
+        FIANU_REKOR_URL: ${{ inputs.fianu-host }}
+        FIANU_LEDGER_MIRROR: ${{ inputs.fianu-host }}/ledger/root
+        FIANU_LEDGER_ROOT: ${{ inputs.fianu-host }}/ledger/root/root.json
         IDENTITY_TOKEN: ${{ inputs.identity-token || steps.gcloud_auth.outputs.id_token }}
       run: |-
-        # Initialize Cosign with the Fianu Mirror and Root
-        cosign initialize --mirror "${{ env.FIANU_HOST }}/ledger/root" --root "${{ env.FIANU_HOST }}/ledger/root/root.json"
+        # Initialize Cosign with the Fianu root key file and repository mirror.
+        cosign initialize --mirror "${{ env.FIANU_LEDGER_MIRROR }}" --root "${{ env.FIANU_LEDGER_ROOT }}"
 
         # Sign the SBOM with Cosign, generate a Rekor Bundle, and output the Digest
-        cosign sign-blob "${{ inputs.evidence }}" \
+        cosign sign-blob --yes "${{ inputs.evidence }}" \
           --bundle "bundle.json" \
-          --rekor-url "${{ env.FIANU_HOST }}" \
+          --rekor-url "${{ env.FIANU_REKOR_URL }}" \
           --identity-token="${{ env.IDENTITY_TOKEN }}" \
-          --fulcio-url "${{ env.FIANU_HOST }}/ledger/fulcio" \
-          --yes
+          --fulcio-url "${{ env.FIANU_FULCIO_URL }}"
         
         opts=""
         if [ ! -z ${{ inputs.evidence-format }} ]; then
@@ -118,4 +127,8 @@ runs:
         fi
         
         # Capture the Generated Bundle with Fianu
-        fianu capture evidence --input bundle.json --type "blob" --source "${{ inputs.evidence-source }}" --resource-uri "${{ inputs.evidence-uri }}" ${opts}
+        fianu capture evidence \
+          --input bundle.json \  
+          --type "blob" \
+          --source "${{ inputs.evidence-source }}" \
+          --resource-uri "${{ inputs.evidence-uri }}" ${opts}
