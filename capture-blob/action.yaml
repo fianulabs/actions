@@ -1,4 +1,4 @@
-name: 'Fianu Capture Evidence'
+name: 'Fianu Capture Blob Evidence'
 description: 'This action captures evidence using the Fianu CLI.'
 inputs:
   fianu-host:
@@ -29,7 +29,7 @@ inputs:
     required: false
     default: sigstore
   evidence:
-    description: 'The path to the evidence to capture.'
+    description: 'The path to the (blob) evidence to sign and capture.'
     required: true
   evidence-uri:
     description: 'The URI of the resource to associate with the evidence.'
@@ -78,7 +78,6 @@ runs:
         FIANU_APP_CODE: ${{ inputs.fianu-app-code }}
         FIANU_USERNAME: ${{ inputs.fianu-username }}
         FIANU_VERSION: ${{ inputs.fianu-cli-version }}
-        BUNDLE_FILE: bundle.json
       run: |-
         # Initialize Cosign with the Fianu Mirror and Root
         cosign initialize \
@@ -88,7 +87,7 @@ runs:
         # Sign the SBOM with Cosign, generate a Rekor Bundle, and output the Digest
         cosign sign-blob --yes \
           "${{ inputs.evidence }}" \
-          --bundle "${{ env.BUNDLE_FILE }}" \
+          --bundle "bundle.json" \
           --rekor-url "${{ env.FIANU_HOST }}" \
           --identity-token=${{ steps.gcloud_auth.outputs.id_token }} \
           --fulcio-url "${{ env.FIANU_HOST }}/ledger/fulcio"
