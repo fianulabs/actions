@@ -129,10 +129,10 @@ runs:
         
         # Capture the Generated Bundle with Fianu
         
-        echo '### Capturing Blob Evidence with Fianu CLI\n' >> $GITHUB_STEP_SUMMARY
-        echo '```bash\n' >> $GITHUB_STEP_SUMMARY
-        echo 'fianu capture evidence --input bundle.json --type "blob" --source "${{ inputs.evidence-source }}" --resource-uri "${{ inputs.evidence-uri }}" ${opts}\n' >> $GITHUB_STEP_SUMMARY
-        echo '```\n' >> $GITHUB_STEP_SUMMARY
+        echo '### Fianu Capture Blob Evidence' >> $GITHUB_STEP_SUMMARY
+        echo '```bash' >> $GITHUB_STEP_SUMMARY
+        echo 'fianu capture evidence --input bundle.json --type "blob" --source "${{ inputs.evidence-source }}" --resource-uri "${{ inputs.evidence-uri }}" ${opts}' >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
 
         fianu capture evidence --input bundle.json --type "blob" --source "${{ inputs.evidence-source }}" --resource-uri "${{ inputs.evidence-uri }}" ${opts}
         
