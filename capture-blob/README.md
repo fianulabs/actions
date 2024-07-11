@@ -34,7 +34,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Capture Blob Evidence
-        uses: path/to/your/action
+        uses: fianulabs/actions/capture-blob@main
         with:
           fianu-host: "https://app.fianu.io"
           fianu-cli-version: "1.9.11"

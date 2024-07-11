@@ -40,7 +40,12 @@ inputs:
     required: true
   evidence-type:
     description: 'The type of evidence to capture.'
-    required: true
+    required: false
+    default: 'blob'
+  evidence-format:
+    description: 'The format of the blob evidence to capture.'
+    required: false
+    default: ''
 runs:
   using: "composite"
   steps:
@@ -91,10 +96,16 @@ runs:
           --rekor-url "${{ env.FIANU_HOST }}" \
           --identity-token=${{ steps.gcloud_auth.outputs.id_token }} \
           --fulcio-url "${{ env.FIANU_HOST }}/ledger/fulcio"
-
+        
+        opts=""
+        if [ ! -z ${{ inputs.evidence-format }} ]; then
+          opts="$opts --format ${{ inputs.evidence-format }}"
+        fi
+        
         # Capture the Generated Bundle with Fianu
         fianu capture evidence \
           --input bundle.json \
           --type ${{ inputs.evidence-type }}  \
           --source ${{ inputs.evidence-source }} \
-          --resource-uri ${{ inputs.evidence-uri }} $format_option
+          --resource-uri ${{ inputs.evidence-uri }} \
+          ${opts}
