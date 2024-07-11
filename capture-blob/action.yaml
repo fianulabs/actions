@@ -55,6 +55,7 @@ runs:
           exit 1
         fi
 
+
     # Authentication Google Cloud CLI
     # Reference: https://github.com/google-github-actions/auth
     - name: Google Cloud Authentication Setup
@@ -77,10 +78,12 @@ runs:
     # Reference: https://github.com/sigstore/cosign-installer
     - name: Install Cosign
       uses: sigstore/cosign-installer@v3.5.0
+      if: success()
 
     # Sign and Capture SBOM Evidence
     - name: Cosign Sign Blob and Capture SBOM Evidence
       shell: bash
+      if: success()
       env:
         FIANU_HOST: ${{ inputs.fianu-host }}
         FIANU_CLIENT_ID: ${{ inputs.fianu-client-id }}
@@ -109,9 +112,4 @@ runs:
         fi
         
         # Capture the Generated Bundle with Fianu
-        fianu capture evidence \
-          --input bundle.json \
-          --type ${{ inputs.evidence-type }}  \
-          --source ${{ inputs.evidence-source }} \
-          --resource-uri ${{ inputs.evidence-uri }} \
-          ${opts}
+        fianu capture evidence --input bundle.json --type "blob" --source "${{ inputs.evidence-source }}" --resource-uri "${{ inputs.evidence-uri }}" ${opts}
