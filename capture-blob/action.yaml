@@ -21,6 +21,10 @@ inputs:
     description: 'Fianu service account provided to your organization to perform keyless signing.'
     required: false
     default: ''
+  fianu-debug:
+    description: 'Enable verbose Fianu cli output.'
+    required: false
+    default: 'false'
   identity-token:
     description: 'Identity token used to authenticate with Fianu'
     required: false
@@ -109,6 +113,10 @@ runs:
         opts=""
         if [ ! -z ${{ inputs.evidence-format }} ]; then
           opts="$opts --format ${{ inputs.evidence-format }}"
+        fi
+        
+        if [ ${{ inputs.fianu-debug }} == "true" ]; then
+          opts="$opts -d"
         fi
         
         # Capture the Generated Bundle with Fianu
