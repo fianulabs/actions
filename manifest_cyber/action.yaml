@@ -61,6 +61,8 @@ runs:
     - name: Google Cloud CLI Installation
       id: setup_gcloud
       uses: google-github-actions/setup-gcloud@v2
+      with:
+        project_id: 'projects/68661080711/locations/global/workloadIdentityPools/fianu-github-actions/providers/github'
 
     # Install Cosign CLI
     # Reference: https://github.com/sigstore/cosign-installer
