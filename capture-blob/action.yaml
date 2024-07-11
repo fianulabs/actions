@@ -134,6 +134,7 @@ runs:
         
         ```bash
         fianu capture evidence \
+          --input bundle.json \
           --type "blob" \
           --source "${{ inputs.evidence-source }}" \
           --resource-uri "${{ inputs.evidence-uri }}" \
