@@ -98,9 +98,7 @@ runs:
         IDENTITY_TOKEN: ${{ inputs.identity-token || steps.gcloud_auth.outputs.id_token }}
       run: |-
         # Initialize Cosign with the Fianu Mirror and Root
-        cosign initialize \
-          --mirror "${{ env.FIANU_HOST }}/ledger/root" \
-          --root "${{ env.FIANU_HOST }}/ledger/root/root.json"
+        cosign initialize --mirror "${{ env.FIANU_HOST }}/ledger/root" --root "${{ env.FIANU_HOST }}/ledger/root/root.json"
 
         # Sign the SBOM with Cosign, generate a Rekor Bundle, and output the Digest
         cosign sign-blob "${{ inputs.evidence }}" \
