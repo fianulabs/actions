@@ -5,10 +5,6 @@ inputs:
     description: "Fianu Host URL"
     required: true
     default: "https://app.fianu.io"
-  fianu-cli-version:
-    description: "Fianu CLI Version to Use"
-    required: true
-    default: "1.9.11"
   fianu-app-code:
     description: "Fianu App Code"
     required: true
@@ -38,10 +34,6 @@ inputs:
   evidence-source:
     description: 'The source of the evidence.'
     required: true
-  evidence-type:
-    description: 'The type of evidence to capture.'
-    required: false
-    default: 'blob'
   evidence-format:
     description: 'The format of the blob evidence to capture.'
     required: false

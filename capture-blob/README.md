@@ -8,17 +8,16 @@ the Cosign CLI to sign and capture evidence in the form of blobs.
 | Name                    | Description                                                                                              | Required | Default                |
 |-------------------------|----------------------------------------------------------------------------------------------------------|----------|------------------------|
 | `fianu-host`            | Fianu Host URL                                                                                           | true     | `https://app.fianu.io` |
-| `fianu-cli-version`     | Fianu CLI Version to Use                                                                                 | true     | `1.9.11`               |
 | `fianu-app-code`        | Fianu App Code                                                                                           | true     |                        |
 | `fianu-client-id`       | Fianu Client ID                                                                                          | true     |                        |
 | `fianu-client-secret`   | Fianu Client Secret                                                                                      | true     |                        |
-| `fianu-username`        | Fianu Username (Optional)                                                                                | false    |                        |
+| `fianu-username`        | Fianu Username (Optional)                                                                                | false    | `''`                   |
 | `fianu-service-account` | The Fianu service account provided to your organization to perform keyless signing.                      | true     |                        |
 | `audience`              | Specifies the identity token audience to use when creating an identity token to authenticate with Fianu. | false    | `sigstore`             |
 | `evidence`              | The path to the (blob) evidence to sign and capture.                                                     | true     |                        |
 | `evidence-uri`          | The URI of the resource to associate with the evidence.                                                  | false    | `''`                   |
 | `evidence-source`       | The source of the evidence.                                                                              | true     |                        |
-| `evidence-type`         | The type of evidence to capture.                                                                         | true     |                        |
+| `evidence-format`       | The format of the blob evidence to capture.                                                              | false    | `''`                   |
 
 ## Usage
 
