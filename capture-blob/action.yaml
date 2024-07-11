@@ -18,8 +18,13 @@ inputs:
     description: "Fianu Username (Optional)"
     required: false
   fianu-service-account:
-    description: 'The Fianu service account provided to your organization to perform keyless signing.'
-    required: true
+    description: 'Fianu service account provided to your organization to perform keyless signing.'
+    required: false
+    default: ''
+  identity-token:
+    description: 'Identity token used to authenticate with Fianu'
+    required: false
+    default: ''
   audience:
     description: 'Specifies the identity token audience to use when creating an identity token to authenticate with Fianu.'
     required: false
@@ -45,6 +50,7 @@ runs:
     # Reference: https://github.com/google-github-actions/auth
     - name: Google Cloud Authentication Setup
       id: gcloud_auth
+      if: ${{ inputs.fianu-service-account }}
       uses: google-github-actions/auth@v2
       with:
         token_format: id_token
@@ -56,9 +62,15 @@ runs:
     # Google Cloud CLI Installation
     - name: Google Cloud CLI Installation
       id: setup_gcloud
+      if: ${{ inputs.fianu-service-account }}
       uses: google-github-actions/setup-gcloud@v2
       with:
         project_id: 'projects/68661080711/locations/global/workloadIdentityPools/fianu-github-actions/providers/github'
+
+    #    - name: 'Identity Token Variable'
+    #      id: identity_token
+    #      shell: bash
+    #      run: |-
 
     # Install Cosign CLI
     # Reference: https://github.com/sigstore/cosign-installer
