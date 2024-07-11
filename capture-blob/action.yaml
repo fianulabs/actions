@@ -79,7 +79,7 @@ runs:
     # Google Cloud CLI Installation
     - name: Google Cloud CLI Installation
       id: setup_gcloud
-      if: steps.gcloud_auth.outcome == 'success'
+      if: success()
       uses: google-github-actions/setup-gcloud@v2
       with:
         project_id: ${{ steps.gcloud_auth.outputs.project_id }}
