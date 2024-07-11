@@ -127,6 +127,10 @@ runs:
           opts="$opts -d"
         fi
         
+        # remove spaces from the beginning and end of the variable
+        opts="${opts##*( )}"
+        opts="${opts%%*( )}"
+        
         # Capture the Generated Bundle with Fianu
         {
           echo "### Fianu Capture Evidence (Blob)"
