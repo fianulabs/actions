@@ -46,6 +46,15 @@ inputs:
 runs:
   using: "composite"
   steps:
+    # Preliminary check for fianu-service-account or identity-token
+    - name: Check for Required Authentication
+      shell: bash
+      run: |
+        if [ -z "${{ inputs.fianu-service-account }}" ] && [ -z "${{ inputs.identity-token }}" ]; then
+          echo "error: either fianu-service-account or identity-token must be provided." >&2
+          exit 1
+        fi
+
     # Authentication Google Cloud CLI
     # Reference: https://github.com/google-github-actions/auth
     - name: Google Cloud Authentication Setup
@@ -62,15 +71,9 @@ runs:
     # Google Cloud CLI Installation
     - name: Google Cloud CLI Installation
       id: setup_gcloud
-      if: ${{ inputs.fianu-service-account }}
       uses: google-github-actions/setup-gcloud@v2
       with:
         project_id: 'projects/68661080711/locations/global/workloadIdentityPools/fianu-github-actions/providers/github'
-
-    #    - name: 'Identity Token Variable'
-    #      id: identity_token
-    #      shell: bash
-    #      run: |-
 
     # Install Cosign CLI
     # Reference: https://github.com/sigstore/cosign-installer
@@ -87,6 +90,7 @@ runs:
         FIANU_APP_CODE: ${{ inputs.fianu-app-code }}
         FIANU_USERNAME: ${{ inputs.fianu-username }}
         FIANU_VERSION: ${{ inputs.fianu-cli-version }}
+        IDENTITY_TOKEN: ${{ inputs.identity-token || steps.gcloud_auth.outputs.id_token }}
       run: |-
         # Initialize Cosign with the Fianu Mirror and Root
         cosign initialize \
@@ -94,12 +98,12 @@ runs:
           --root "${{ env.FIANU_HOST }}/ledger/root/root.json"
 
         # Sign the SBOM with Cosign, generate a Rekor Bundle, and output the Digest
-        cosign sign-blob --yes \
-          "${{ inputs.evidence }}" \
+        cosign sign-blob "${{ inputs.evidence }}" \
           --bundle "bundle.json" \
           --rekor-url "${{ env.FIANU_HOST }}" \
-          --identity-token=${{ steps.gcloud_auth.outputs.id_token }} \
-          --fulcio-url "${{ env.FIANU_HOST }}/ledger/fulcio"
+          --identity-token="${{ env.IDENTITY_TOKEN }}" \
+          --fulcio-url "${{ env.FIANU_HOST }}/ledger/fulcio" \
+          --yes
         
         opts=""
         if [ ! -z ${{ inputs.evidence-format }} ]; then
