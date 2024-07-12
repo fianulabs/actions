@@ -5,21 +5,22 @@ identity token and utilizes the Cosign CLI to sign and capture evidence in the f
 
 ## Inputs
 
-| Name                    | Description                                                                                              | Required | Default                |
-|-------------------------|----------------------------------------------------------------------------------------------------------|----------|------------------------|
-| `fianu-host`            | Fianu Host URL                                                                                           | true     | `https://app.fianu.io` |
-| `fianu-app-code`        | Fianu App Code                                                                                           | true     |                        |
-| `fianu-client-id`       | Fianu Client ID                                                                                          | true     |                        |
-| `fianu-client-secret`   | Fianu Client Secret                                                                                      | true     |                        |
-| `fianu-username`        | Fianu Username (Optional)                                                                                | false    |                        |
-| `fianu-service-account` | Fianu service account provided to your organization to perform keyless signing.                          | false    |                        |
-| `fianu-debug`           | Enable verbose Fianu CLI output.                                                                         | false    | `false`                |
-| `identity-token`        | Identity token used to authenticate with Fianu.                                                          | false    | `''`                   |
-| `audience`              | Specifies the identity token audience to use when creating an identity token to authenticate with Fianu. | false    | `sigstore`             |
-| `evidence`              | The path to the (blob) evidence to sign and capture.                                                     | true     |                        |
-| `evidence-uri`          | The URI of the resource to associate with the evidence.                                                  | false    | `''`                   |
-| `evidence-source`       | The source of the evidence.                                                                              | true     |                        |
-| `evidence-format`       | The format of the blob evidence to capture.                                                              | false    | `''`                   |
+| Name                    | Description                                                                               | Required | Default                |
+|-------------------------|-------------------------------------------------------------------------------------------|----------|------------------------|
+| `fianu-host`            | Fianu Host URL                                                                            | true     | `https://app.fianu.io` |
+| `fianu-app-code`        | Fianu App Code                                                                            | true     |                        |
+| `fianu-client-id`       | Fianu Client ID                                                                           | true     |                        |
+| `fianu-client-secret`   | Fianu Client Secret                                                                       | true     |                        |
+| `fianu-username`        | Fianu Username (Optional)                                                                 | false    |                        |
+| `fianu-asset-token`     | Fianu Asset Token associated with the Fianu Asset to which evidence should be associated. | false    |                        |
+| `fianu-service-account` | Fianu service account provided to your organization to perform keyless signing.           | false    |                        |
+| `fianu-debug`           | Enable verbose Fianu CLI output.                                                          | false    | `false`                |
+| `identity-token`        | Identity token for keyless signing. Required if "fianu-service-account" is not specified. | false    | `''`                   |
+| `audience`              | Identity token audience for generating an identity token to authenticate with Fianu.      | false    | `sigstore`             |
+| `evidence`              | The path to the (blob) evidence to sign and capture.                                      | true     |                        |
+| `evidence-uri`          | The URI of the resource to associate with the evidence.                                   | false    | `''`                   |
+| `evidence-source`       | The source of the evidence.                                                               | true     |                        |
+| `evidence-format`       | The format of the blob evidence to capture.                                               | false    | `''`                   |
 
 ## Usage
 
@@ -27,24 +28,24 @@ identity token and utilizes the Cosign CLI to sign and capture evidence in the f
 name: Example Workflow
 on: [ push ]
 jobs:
-   capture-evidence:
-      runs-on: ubuntu-latest
-      steps:
-         - name: Checkout Repository
-           uses: actions/checkout@v2
+  capture-evidence:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
-         - name: Capture Blob Evidence
-           uses: fianulabs/actions/capture-blob@main
-           with:
-              fianu-host: "https://app.fianu.io"
-              fianu-app-code: ${{ secrets.FIANU_APP_CODE }}
-              fianu-client-id: ${{ secrets.FIANU_CLIENT_ID }}
-              fianu-client-secret: ${{ secrets.FIANU_CLIENT_SECRET }}
-              fianu-service-account: ${{ secrets.FIANU_SERVICE_ACCOUNT }}
-              identity-token: ${{ secrets.IDENTITY_TOKEN }}
-              evidence: "path/to/your/evidence"
-              evidence-source: "source_of_evidence"
-              evidence-format: "json"
+      - name: Capture Blob Evidence
+        uses: fianulabs/actions/capture-blob@main
+        with:
+          fianu-host: "https://app.fianu.io"
+          fianu-app-code: ${{ secrets.FIANU_APP_CODE }}
+          fianu-client-id: ${{ secrets.FIANU_CLIENT_ID }}
+          fianu-client-secret: ${{ secrets.FIANU_CLIENT_SECRET }}
+          fianu-service-account: ${{ secrets.FIANU_SERVICE_ACCOUNT }}
+          identity-token: ${{ secrets.IDENTITY_TOKEN }}
+          evidence: "path/to/your/evidence"
+          evidence-source: "source_of_evidence"
+          evidence-format: "json"
 ```
 
 ## Steps Details
