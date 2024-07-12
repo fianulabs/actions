@@ -42,6 +42,7 @@ jobs:
           fianu-client-id: ${{ secrets.FIANU_CLIENT_ID }}
           fianu-client-secret: ${{ secrets.FIANU_CLIENT_SECRET }}
           fianu-service-account: ${{ secrets.FIANU_SERVICE_ACCOUNT }}
+          fianu-asset-token: ${{ secrets.FIANU_ASSET_TOKEN }}
           identity-token: ${{ secrets.IDENTITY_TOKEN }}
           evidence: "path/to/your/evidence"
           evidence-source: "source_of_evidence"
