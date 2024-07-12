@@ -66,13 +66,13 @@ runs:
       id: sbom
       uses: sergeysova/jq-action@v2
       with:
-        cmd: jq ${{ inputs.bom-ref-path }} ${{ inputs.manifest-cyber-sbom-output }} -r
+        cmd: "jq ${{ inputs.bom-ref-path }} ${{ inputs.manifest-cyber-sbom-output }} -r"
 
     - name: Prepare Fianu Options
       id: prepare
       shell: bash
       run: |
-        fianu declare --path 'manifest_cyber.sbom' --param 'bom-ref' --set ${{ steps.sbom.outputs.value }}
+        fianu declare --path 'manifest_cyber.sbom' --param 'bom-ref' --set "${{ steps.sbom.outputs.value }}"
         fianu config declarations
         
         if [ "${{ inputs.bom-ref-path }}" = ".name" ]; then
