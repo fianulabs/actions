@@ -72,6 +72,10 @@ runs:
       id: prepare
       shell: bash
       run: |
+        if [ -z "${{ steps.sbom.outputs.value }}" ]; then
+          echo "Failed to extract SBOM reference from the Manifest Cyber SBOM output."
+          exit 1
+        fi
         fianu declare --path 'manifest_cyber.sbom' --param 'bom-ref' --set "${{ steps.sbom.outputs.value }}"
         fianu config declarations
         
