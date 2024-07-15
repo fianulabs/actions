@@ -53,6 +53,10 @@ inputs:
     description: 'Identity token for keyless signing. Required if "fianu-service-account" is not specified.'
     required: false
     default: ''
+  workload-identity-provider:
+    description: 'Workload identity provider for generating an identity token to authenticate with Fianu.'
+    required: false
+    default: 'projects/68661080711/locations/global/workloadIdentityPools/fianu-github-actions/providers/github'
   audience:
     description: 'Identity token audience for generating an identity token to authenticate with Fianu.'
     required: false
@@ -97,6 +101,7 @@ runs:
         fianu-debug: ${{ inputs.fianu-debug }}
         audience: ${{ inputs.audience }}
         identity-token: ${{ inputs.identity-token }}
+        workload-identity-provider: ${{ inputs.workload-identity-provider }}
         evidence: ${{ inputs.manifest-cyber-sbom-output }}
         evidence-source: sbom.manifest_cyber
         evidence-format: ${{ env.SBOM_FORMAT }}
