@@ -5,22 +5,23 @@ identity token and utilizes the Cosign CLI to sign and capture evidence in the f
 
 ## Inputs
 
-| Name                    | Description                                                                               | Required | Default                |
-|-------------------------|-------------------------------------------------------------------------------------------|----------|------------------------|
-| `fianu-host`            | Fianu Host URL                                                                            | true     | `https://app.fianu.io` |
-| `fianu-app-code`        | Fianu App Code                                                                            | true     |                        |
-| `fianu-client-id`       | Fianu Client ID                                                                           | true     |                        |
-| `fianu-client-secret`   | Fianu Client Secret                                                                       | true     |                        |
-| `fianu-username`        | Fianu Username (Optional)                                                                 | false    |                        |
-| `fianu-asset-token`     | Fianu Asset Token associated with the Fianu Asset to which evidence should be associated. | false    |                        |
-| `fianu-service-account` | Fianu service account provided to your organization to perform keyless signing.           | false    |                        |
-| `fianu-debug`           | Enable verbose Fianu CLI output.                                                          | false    | `false`                |
-| `identity-token`        | Identity token for keyless signing. Required if "fianu-service-account" is not specified. | false    | `''`                   |
-| `audience`              | Identity token audience for generating an identity token to authenticate with Fianu.      | false    | `sigstore`             |
-| `evidence`              | The path to the (blob) evidence to sign and capture.                                      | true     |                        |
-| `evidence-uri`          | The URI of the resource to associate with the evidence.                                   | false    | `''`                   |
-| `evidence-source`       | The source of the evidence.                                                               | true     |                        |
-| `evidence-format`       | The format of the blob evidence to capture.                                               | false    | `''`                   |
+| Name                         | Description                                                                               | Required | Default                                                                                             |
+|------------------------------|-------------------------------------------------------------------------------------------|----------|-----------------------------------------------------------------------------------------------------|
+| `fianu-host`                 | Fianu Host URL                                                                            | true     | `https://app.fianu.io`                                                                              |
+| `fianu-app-code`             | Fianu App Code                                                                            | true     |                                                                                                     |
+| `fianu-client-id`            | Fianu Client ID                                                                           | true     |                                                                                                     |
+| `fianu-client-secret`        | Fianu Client Secret                                                                       | true     |                                                                                                     |
+| `fianu-username`             | Fianu Username (Optional)                                                                 | false    |                                                                                                     |
+| `fianu-asset-token`          | Fianu Asset Token associated with the Fianu Asset to which evidence should be associated. | false    |                                                                                                     |
+| `fianu-service-account`      | Fianu service account provided to your organization to perform keyless signing.           | false    |                                                                                                     |
+| `fianu-debug`                | Enable verbose Fianu CLI output.                                                          | false    | `false`                                                                                             |
+| `workload-identity-provider` | Workload identity provider for generating an identity token to authenticate with Fianu.   | false    | `projects/68661080711/locations/global/workloadIdentityPools/fianu-github-actions/providers/github` |
+| `identity-token`             | Identity token for keyless signing. Required if "fianu-service-account" is not specified. | false    | `''`                                                                                                |
+| `audience`                   | Identity token audience for generating an identity token to authenticate with Fianu.      | false    | `sigstore`                                                                                          |
+| `evidence`                   | The path to the (blob) evidence to sign and capture.                                      | true     |                                                                                                     |
+| `evidence-uri`               | The URI of the resource to associate with the evidence.                                   | false    | `''`                                                                                                |
+| `evidence-source`            | The source of the evidence.                                                               | true     |                                                                                                     |
+| `evidence-format`            | The format of the blob evidence to capture.                                               | false    | `''`                                                                                                |
 
 ## Usage
 
