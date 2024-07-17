@@ -90,7 +90,7 @@ runs:
         fi
 
     - name: Capture Blob Evidence
-      uses: fianulabs/actions/capture-blob@feature/manifest-cyber-updates
+      uses: fianulabs/actions/capture-blob@main
       with:
         fianu-host: ${{ inputs.fianu-host }}
         fianu-app-code: ${{ inputs.fianu-app-code }}
