@@ -105,3 +105,4 @@ runs:
         evidence: ${{ inputs.manifest-cyber-sbom-output }}
         evidence-source: sbom.manifest_cyber
         evidence-format: ${{ env.SBOM_FORMAT }}
+        evidence-uri: ${{ inputs.manifest-cyber-host }}
