@@ -36,7 +36,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Capture Evidence
-        uses: fianulabs/actions/capture-blob@main
+        uses: fianulabs/actions/manifest_cyber@main
         with:
           fianu-host: ${{ secrets.FIANU_HOST }}
           fianu-client-id: ${{ secrets.FIANU_CLIENT_ID }}
