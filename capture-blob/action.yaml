@@ -1,0 +1,151 @@
+name: 'Fianu Capture Blob Evidence'
+description: 'This action captures evidence using the Fianu CLI.'
+inputs:
+  fianu-host:
+    description: "Fianu Host URL"
+    required: true
+    default: "https://app.fianu.io"
+  fianu-app-code:
+    description: "Fianu App Code"
+    required: true
+  fianu-client-id:
+    description: "Fianu Client ID"
+    required: true
+  fianu-client-secret:
+    description: "Fianu Client Secret"
+    required: true
+  fianu-username:
+    description: "Fianu Username (optional)"
+    required: false
+  fianu-asset-token:
+    description: 'Fianu Asset Token associated with the Fianu Asset to which evidence should be associated.'
+    required: false
+    default: ''
+  fianu-service-account:
+    description: 'Service account identifier for generating credentials and performing keyless signing. Mutually exclusive with "identity-token".'
+    required: false
+    default: ''
+  fianu-debug:
+    description: 'Enable verbose Fianu CLI output.'
+    required: false
+    default: 'false'
+  identity-token:
+    description: 'Identity token for keyless signing. Required if "fianu-service-account" is not specified.'
+    required: false
+    default: ''
+  workload-identity-provider:
+    description: 'Workload identity provider for generating an identity token to authenticate with Fianu.'
+    required: false
+    default: 'projects/68661080711/locations/global/workloadIdentityPools/fianu-github-actions/providers/github'
+  audience:
+    description: 'Identity token audience for generating an identity token to authenticate with Fianu.'
+    required: false
+    default: sigstore
+  evidence:
+    description: 'The path to the (blob) evidence to sign and capture.'
+    required: true
+  evidence-uri:
+    description: 'The URI of the resource to associate with the evidence.'
+    required: false
+    default: ''
+  evidence-source:
+    description: 'The source of the evidence.'
+    required: true
+  evidence-format:
+    description: 'The format of the blob evidence to capture.'
+    required: false
+    default: ''
+runs:
+  using: "composite"
+  steps:
+    # Preliminary check for fianu-service-account or identity-token
+    - name: Check for Required Authentication
+      shell: bash
+      run: |
+        if [ -z "${{ inputs.fianu-service-account }}" ] && [ -z "${{ inputs.identity-token }}" ]; then
+          echo "error: either fianu-service-account or identity-token must be provided." >&2
+          exit 1
+        fi
+
+    # Authentication Google Cloud CLI
+    # Reference: https://github.com/google-github-actions/auth
+    - name: Google Cloud Authentication Setup
+      id: gcloud_auth
+      if: ${{ inputs.fianu-service-account }}
+      uses: google-github-actions/auth@v2
+      with:
+        token_format: id_token
+        id_token_audience: ${{ inputs.audience }}
+        id_token_include_email: true
+        workload_identity_provider: ${{ inputs.workload-identity-provider }}
+        service_account: ${{ inputs.fianu-service-account }}
+        export_environment_variables: true
+
+    # Google Cloud CLI Installation
+    - name: Google Cloud CLI Installation
+      id: setup_gcloud
+      if: success()
+      uses: google-github-actions/setup-gcloud@v2
+      with:
+        project_id: ${{ steps.gcloud_auth.outputs.project_id }}
+
+    # Install Cosign CLI
+    # Reference: https://github.com/sigstore/cosign-installer
+    - name: Install Cosign
+      uses: sigstore/cosign-installer@v3.5.0
+      if: success()
+
+    # Sign and Capture SBOM Evidence
+    - name: Cosign Sign Blob and Capture SBOM Evidence
+      shell: bash
+      if: success()
+      env:
+        FIANU_HOST: ${{ inputs.fianu-host }}
+        FIANU_CLIENT_ID: ${{ inputs.fianu-client-id }}
+        FIANU_CLIENT_SECRET: ${{ inputs.fianu-client-secret }}
+        FIANU_APP_CODE: ${{ inputs.fianu-app-code }}
+        FIANU_ASSET_TOKEN: ${{ inputs.fianu-asset-token }}
+        FIANU_USERNAME: ${{ inputs.fianu-username }}
+        FIANU_FULCIO_URL: ${{ inputs.fianu-host }}/ledger/fulcio
+        FIANU_REKOR_URL: ${{ inputs.fianu-host }}
+        FIANU_LEDGER_MIRROR: ${{ inputs.fianu-host }}/ledger/root
+        FIANU_LEDGER_ROOT: ${{ inputs.fianu-host }}/ledger/root/root.json
+        IDENTITY_TOKEN: ${{ inputs.identity-token || steps.gcloud_auth.outputs.id_token }}
+      run: |-
+        # Initialize Cosign with the Fianu root key file and repository mirror.
+        cosign initialize --mirror "${{ env.FIANU_LEDGER_MIRROR }}" --root "${{ env.FIANU_LEDGER_ROOT }}"
+
+        # Sign the SBOM with Cosign, generate a Rekor Bundle, and output the Digest
+        cosign sign-blob --yes "${{ inputs.evidence }}" \
+          --bundle "bundle.json" \
+          --rekor-url "${{ env.FIANU_REKOR_URL }}" \
+          --identity-token="${{ env.IDENTITY_TOKEN }}" \
+          --fulcio-url "${{ env.FIANU_FULCIO_URL }}"
+        
+        opts=""
+        if [ ! -z ${{ inputs.evidence-format }} ]; then
+          opts="$opts --format ${{ inputs.evidence-format }}"
+        fi
+        
+        if [ ${{ inputs.fianu-debug }} == "true" ]; then
+          opts="$opts -d"
+        fi
+        
+        # remove spaces from the beginning and end of the variable
+        opts="${opts##*( )}"
+        opts="${opts%%*( )}"
+        
+        # Capture the Generated Bundle with Fianu
+        # {
+        #   echo "### Fianu Capture Evidence (Blob)"
+        #   echo '```bash'
+        #   echo "fianu capture evidence --input bundle.json --type blob --source ${{ inputs.evidence-source }} --resource-uri ${{ inputs.evidence-uri }} ${opts}"
+        #   echo '```'
+        # } >> $GITHUB_STEP_SUMMARY
+
+        fianu capture evidence --input bundle.json --type blob --source "${{ inputs.evidence-source }}" --resource-uri "${{ inputs.evidence-uri }}" ${opts}
+        
+        if [ $? -ne 0 ]; then 
+          echo "error: failed to capture evidence with Fianu CLI." >&2
+          exit 1
+        fi
