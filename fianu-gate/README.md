@@ -56,7 +56,7 @@ steps:
       version: ${{ secrets.FIANU_VERSION }}
 
   - name: Fianu Gate
-    uses: fianulabs/actions@fianu-gate-action
+    uses: fianulabs/actions/fianu-gate-action@main
     with:
       fianu_gate_name: ci.codereview.gate
       fianu_gate_enforce: false  # gate will be checked, not enforced
