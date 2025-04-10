@@ -1,6 +1,5 @@
-import * as core from '@actions/core'
-import * as github from '@actions/github'
-import artifact, {UploadArtifactOptions} from '@actions/artifact'
+const core = require('@actions/core');
+const artifact = require('@actions/artifact')
 
 async function run () {
     try {
