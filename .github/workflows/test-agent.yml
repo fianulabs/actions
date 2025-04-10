@@ -1,0 +1,37 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - main
+      - feature/public-enterprise-secure-agent
+  pull_request:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  deptest:
+    name: Test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-latest]
+        version: [v1.0.5]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup gh
+        uses: ./agent
+        with:
+          version: ${{ matrix.version }}
+
+      - name: Test CLI
+        run: |-
+          sleep 5
+          echo "test done"
+
+      - name: Curl fianu.io
+        run: curl https://app.fianu.io

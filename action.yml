@@ -4,7 +4,7 @@ inputs:
   version:
     description: Version of Fianu CLI to install
     required: false
-    default: 1.9.11
+    default: 1.9.38
 runs:
   using: node20
   main: dist/index.js
