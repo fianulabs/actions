@@ -8,7 +8,7 @@ async function run () {
         const client = new artifact.DefaultArtifactClient()
 
         const uploadResponse = await client.uploadArtifact(
-            `fianu.agent.pipeline.version_v1_${process.env['GITHUB_RUN_ID']}.log`,
+            `fianu.agent.pipeline.version_v1_${process.env['GITHUB_JOB_ID']}.log`,
             ["/home/agent/agent.log"],
             "/home/agent",
             {
