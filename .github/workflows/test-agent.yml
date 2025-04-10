@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - testing
       - feature/public-enterprise-secure-agent
   pull_request:
 
