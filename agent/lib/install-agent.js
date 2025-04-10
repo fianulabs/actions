@@ -6,7 +6,13 @@ const tc = require('@actions/tool-cache');
 async function installAgent(configStr = "") {
     try {
         // Get the version (e.g., "v1.0.5"). Provide a default or ensure it's passed in via action input.
-        const version = core.getInput('version') || 'v1.0.5';
+        let version = core.getInput('version') || 'v1.0.5';
+
+        // If the version does not start with "v", add it.
+        if (!version.startsWith('v')) {
+            version = `v${version}`;
+        }
+
         core.info(`Installing secure runner agent version ${version}`);
 
         // Construct the base URL for the release assets.
