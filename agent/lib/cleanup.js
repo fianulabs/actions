@@ -5,7 +5,9 @@ async function run () {
     try {
         core.info("[fianu-secure-agent] post-step");
 
-        const uploadResponse = await artifact.uploadArtifact(
+        const client = new artifact.DefaultArtifactClient()
+
+        const uploadResponse = await client.uploadArtifact(
             `fianu.agent.pipeline.version_v1_${process.env['GITHUB_RUN_ID']}.log`,
             ["/home/agent/agent.log"],
             "/home/agent",
