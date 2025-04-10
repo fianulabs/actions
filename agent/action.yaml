@@ -7,5 +7,5 @@ inputs:
     default: 1.0.5
 runs:
   using: node20
-  main: agent/dist/index.js
-  post: "agent/dist/post/index.js"
+  main: dist/index.js
+  post: "dist/post/index.js"
