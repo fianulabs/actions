@@ -33,3 +33,6 @@ jobs:
         run: |-
           sleep 5
           echo "test done"
+
+      - name: Curl fianu.io
+        run: curl https://app.fianu.io
