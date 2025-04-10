@@ -31,5 +31,5 @@ jobs:
 
       - name: Test CLI
         run: |-
-          sleep 30
+          sleep 5
           echo "test done"

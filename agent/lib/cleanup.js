@@ -8,7 +8,7 @@ async function run () {
         const artifactClient = new artifact.create();
 
         const uploadResponse = await artifactClient.uploadArtifact(
-            `fianu.agent.pipeline.version_v1.log`,
+            `test.log`,
             ["/home/agent/agent.log"],
             "/home/agent",
             {
