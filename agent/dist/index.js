@@ -1,4 +1,4 @@
-/******/ (() => { // webpackBootstrap
+require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
 /***/ 5641:
@@ -144,6 +144,7 @@ async function run () {
             let statusFile = "/home/agent/agent.status";
             let logFile = "/home/agent/agent.log";
             let counter = 0;
+            // eslint-disable-next-line no-constant-condition
             while (true) {
                 if (!fs.existsSync(statusFile)) {
                     counter++;
@@ -31485,3 +31486,4 @@ const setup = __nccwpck_require__(42);
 module.exports = __webpack_exports__;
 /******/ })()
 ;
+//# sourceMappingURL=index.js.map

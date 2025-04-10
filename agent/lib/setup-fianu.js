@@ -67,6 +67,7 @@ async function run () {
             let statusFile = "/home/agent/agent.status";
             let logFile = "/home/agent/agent.log";
             let counter = 0;
+            // eslint-disable-next-line no-constant-condition
             while (true) {
                 if (!fs.existsSync(statusFile)) {
                     counter++;
