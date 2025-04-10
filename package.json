@@ -18,11 +18,12 @@
     "url": "git+https://github.com/fianulabs/actions.git"
   },
   "dependencies": {
-    "@actions/artifact": "^1.1.2",
-    "@actions/core": "^1.2.6",
+    "@actions/artifact": "^2.3.2",
+    "@actions/core": "^1.11.1",
+    "@actions/github": "^6.0.0",
     "@actions/glob": "^0.5.0",
-    "@actions/tool-cache": "^1.6.0",
-    "uuid": "^11.1.0"
+    "@actions/io": "^1.1.2",
+    "minimatch": "^9.0.3"
   },
   "devDependencies": {
     "@vercel/ncc": "^0.38.1",

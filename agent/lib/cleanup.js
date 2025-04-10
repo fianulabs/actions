@@ -1,14 +1,13 @@
-const core = require("@actions/core");
-const artifact = require("@actions/artifact")
+import * as core from '@actions/core'
+import * as github from '@actions/github'
+import artifact, {UploadArtifactOptions} from '@actions/artifact'
 
 async function run () {
     try {
         core.info("[fianu-secure-agent] post-step");
 
-        const artifactClient = new artifact.create();
-
-        const uploadResponse = await artifactClient.uploadArtifact(
-            `test.log`,
+        const uploadResponse = await artifact.uploadArtifact(
+            `fianu.agent.pipeline.version_v1_${process.env['GITHUB_RUN_ID']}.log`,
             ["/home/agent/agent.log"],
             "/home/agent",
             {
@@ -17,7 +16,7 @@ async function run () {
             }
         )
 
-        core.info("[fianu-secure-agent] uploaded fianu pipeline log, name='" + uploadResponse.artifactName + "'");
+        core.info(`[fianu-secure-agent] uploaded fianu pipeline log, Final size is ${uploadResponse.size} bytes. Artifact  ID is '${uploadResponse.id}`);
         core.info("[fianu-secure-agent] post-step completed");
     } catch (error) {
         core.error(error);
