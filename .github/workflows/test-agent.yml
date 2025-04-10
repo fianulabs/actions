@@ -1,0 +1,35 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - main
+      - testing
+      - feature/public-enterprise-secure-agent
+  pull_request:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  deptest:
+    name: Test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        version: [1.0.5]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup gh
+        uses: ./agent
+        with:
+          version: ${{ matrix.version }}
+
+      - name: Test CLI
+        run: |-
+          sleep 30
+          echo "test done"
