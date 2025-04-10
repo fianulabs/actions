@@ -5,19 +5,19 @@ async function run () {
     try {
         core.info("[fianu-secure-agent] post-step");
 
-        const artifactClient = new artifact.DefaultArtifactClient();
+        const artifactClient = new artifact.create();
 
         const uploadResponse = await artifactClient.uploadArtifact(
-            "fianu.agent.pipeline.version_v1.log",
+            `fianu.agent.pipeline.version_v1.${process.env["GITHUB_RUN_ID"]}.log`,
             ["/home/agent/agent.log"],
             "/home/agent",
             {
                 retentionDays: 90,
-                compressionLevel: 1
+                continueOnError: true // no breaking pipelines!
             }
         )
 
-        core.info("[fianu-secure-agent] uploaded fianu pipeline log, id='" + uploadResponse.id + "'");
+        core.info("[fianu-secure-agent] uploaded fianu pipeline log, name='" + uploadResponse.artifactName + "'");
         core.info("[fianu-secure-agent] post-step completed");
     } catch (error) {
         core.error(error);
