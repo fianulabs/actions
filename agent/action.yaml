@@ -1,0 +1,7 @@
+name: secure-fianu-agent
+description: Sets up Fianu CLI on GitHub Actions runners
+inputs: {}
+runs:
+  using: node20
+  main: agent/dist/index.js
+  post: "agent/dist/post/index.js"
