@@ -41,7 +41,6 @@ jobs:
           FIANU_HOST: ${{ secrets.FIANU_HOST }}
         run: |-
           # Capture only stdout from the command
-          fianu root init -d
           $fianuOutput = & .\fianu.exe root init --debug 2>&1
           
           # Write to GitHub summary (optional)
