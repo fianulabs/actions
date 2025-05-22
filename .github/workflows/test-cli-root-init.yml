@@ -34,8 +34,8 @@ jobs:
           FIANU_CLIENT_SECRET: ${{ secrets.FIANU_CLIENT_SECRET }}
           FIANU_HOST: ${{ secrets.FIANU_HOST }}
         run: |-
+          fianu root init --debug
           uname -s | tr '[:upper:]' '[:lower:]'
-          fianu root init
 
   test_linux:
     name: Test
