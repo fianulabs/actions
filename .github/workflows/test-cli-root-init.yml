@@ -34,11 +34,9 @@ jobs:
           FIANU_CLIENT_SECRET: ${{ secrets.FIANU_CLIENT_SECRET }}
           FIANU_HOST: ${{ secrets.FIANU_HOST }}
         run: |-
-          # Capture only stdout from the command
-          fianu root init --debug 1>&2
-          # List current directory recursively
+          $fianuOutput = fianu root init --debug
+          Write-Error $fianuOutput
           $dirList = Get-ChildItem -Recurse | Select-Object FullName | Out-String
-          # Write directory listing to GitHub summary
           Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "### Directory Listing`n``````"
           Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value $dirList.Trim()
           Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "`n``````"
