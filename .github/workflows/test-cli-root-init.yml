@@ -1,4 +1,4 @@
-name: Tests
+name: Test Root Init
 
 on:
   push:
