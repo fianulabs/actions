@@ -41,7 +41,7 @@ jobs:
           FIANU_HOST: ${{ secrets.FIANU_HOST }}
         run: |-
           # Capture only stdout from the command
-          fianu root init
+          fianu root init -d
           
           # List current directory recursively
           $dirList = Get-ChildItem -Recurse | Select-Object FullName | Out-String
