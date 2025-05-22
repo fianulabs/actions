@@ -35,6 +35,11 @@ jobs:
           FIANU_HOST: ${{ secrets.FIANU_HOST }}
         run: |-
           fianu root init --debug
+          # List files in current directory
+          Get-ChildItem -Name | Out-File -FilePath ls_output.txt -Encoding utf8
+          # Append output to GitHub summary
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "### Directory Listing after fianu root init`n"
+          Get-Content ls_output.txt | ForEach-Object { Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value $_ }
           uname -s | tr '[:upper:]' '[:lower:]'
 
   test_linux:
