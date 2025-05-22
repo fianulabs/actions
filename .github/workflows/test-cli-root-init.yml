@@ -47,9 +47,9 @@ jobs:
           FIANU_HOST: ${{ secrets.FIANU_HOST }}
         run: |-
           # Capture only stdout from the command
-          .\fianu.exe root init --root-path 'D:\a\actions\actions\fianu_root_certs\root.json' --mirror-path "file:///C:\\a\\actions\\actions\\fianu_root_certs"
+          .\fianu.exe root init --root-path 'D:\a\actions\actions\fianu_root_certs\root.json' --mirror-path "file://C:\a\actions\actions\fianu_root_certs"
           
-          cosign initialize
+          cosign initialize  --root 'D:\a\actions\actions\fianu_root_certs\root.json' --mirror 'file://D:\a\actions\actions\fianu_root_certs'
           
           # Write to GitHub summary (optional)
           Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "`n### Fianu Output`n"
