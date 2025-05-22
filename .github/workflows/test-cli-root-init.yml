@@ -44,4 +44,5 @@ jobs:
           fianu root init
           
           # List current directory recursively
-          $dirList = Get-ChildItem -Recurse | Select-Object FullName | Out-String
+          $sigstorePath = Join-Path $env:USERPROFILE '.sigstore'
+          Get-ChildItem -Path $sigstorePath -Recurse -Force
