@@ -33,6 +33,12 @@ jobs:
         with:
           version: ${{ matrix.version }}
 
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@main
+        with:
+          # pin to a version that includes TUF support
+          cosign-release: 'v2.5.0'
+
       - name: Test CLI Windows
         shell: pwsh
         env:
@@ -41,7 +47,11 @@ jobs:
           FIANU_HOST: ${{ secrets.FIANU_HOST }}
         run: |-
           # Capture only stdout from the command
-          .\fianu.exe root init --root-path 'D:\a\actions\actions\fianu_root_certs\root.json' --mirror-path "file:///D:/.sigstore"
+          .\fianu.exe root init --root-path 'D:\a\actions\actions\fianu_root_certs\root.json' --mirror-path "file:///D:/a/actions/actions/fianu_root_certs"
+          
+          cosign initialize `
+            --root 'D:\a\actions\actions\fianu_root_certs\root.json' `
+            --mirror 'file:///D:/a/actions/actions/fianu_root_certs/'
           
           # Write to GitHub summary (optional)
           Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "`n### Fianu Output`n"
