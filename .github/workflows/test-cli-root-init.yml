@@ -7,6 +7,12 @@ on:
       - feature/add-windows-init-tests
   pull_request:
 
+permissions:
+  id-token: write
+  contents: write
+  packages: write
+  actions: write
+
 jobs:
   test_windows:
     defaults:
