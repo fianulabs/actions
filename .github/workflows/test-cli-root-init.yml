@@ -45,4 +45,4 @@ jobs:
           
           # List current directory recursively
           $sigstorePath = Join-Path $env:USERPROFILE '.sigstore'
-          Get-ChildItem -Path $sigstorePath -Recurse -Force
+          Get-ChildItem -Path $sigstorePath -Recurse -Force -ErrorAction SilentlyContinue
