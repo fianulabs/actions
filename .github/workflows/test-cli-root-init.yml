@@ -49,4 +49,4 @@ jobs:
           # Write directory listing to GitHub summary
           Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "### Directory Listing`n``````"
           Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value $dirList.Trim()
-          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "`n````
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "`n````"
