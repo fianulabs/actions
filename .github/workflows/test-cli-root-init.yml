@@ -49,9 +49,7 @@ jobs:
           # Capture only stdout from the command
           .\fianu.exe root init --root-path 'D:\a\actions\actions\fianu_root_certs\root.json' --mirror-path "file:///D:/a/actions/actions/fianu_root_certs"
           
-          cosign initialize `
-            --root 'D:\a\actions\actions\fianu_root_certs\root.json' `
-            --mirror 'file:///D:/a/actions/actions/fianu_root_certs/'
+          cosign initialize
           
           # Write to GitHub summary (optional)
           Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "`n### Fianu Output`n"
