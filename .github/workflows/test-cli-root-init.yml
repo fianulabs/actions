@@ -18,7 +18,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest-large, macos-13, macos-14]
-        version: [1.9.39]
+        version: [1.9.39, 1.9.40-1-beta]
     steps:
     - name: Checkout
       uses: actions/checkout@v4
