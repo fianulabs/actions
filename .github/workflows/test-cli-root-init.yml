@@ -34,13 +34,14 @@ jobs:
           FIANU_CLIENT_SECRET: ${{ secrets.FIANU_CLIENT_SECRET }}
           FIANU_HOST: ${{ secrets.FIANU_HOST }}
         run: |-
-          fianu root init --debug
-          # List files in current directory
-          Get-ChildItem -Name | Out-File -FilePath ls_output.txt -Encoding utf8
-          # Append output to GitHub summary
-          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "### Directory Listing after fianu root init`n"
-          Get-Content ls_output.txt | ForEach-Object { Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value $_ }
-          uname -s | tr '[:upper:]' '[:lower:]'
+          $fianuOutput = fianu root init --debug 2>&1
+          $dirList = Get-ChildItem -Recurse | Select-Object FullName | Out-String
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "### fianu root init --debug Output`n``````"
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value $fianuOutput.Trim()
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "``````"
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "### Directory Listing`n``````"
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value $dirList.Trim()
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "``````"
 
   test_linux:
     name: Test
