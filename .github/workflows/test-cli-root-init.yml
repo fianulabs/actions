@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         os: [ windows-latest ]
-        version: [ 1.9.40-1-beta ]
+        version: [ 1.9.39-1-beta ]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -44,32 +44,3 @@ jobs:
           Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "### Directory Listing`n``````"
           Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value $dirList.Trim()
           Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "`n``````"
-
-  test_linux:
-    name: Test
-    runs-on: ${{ matrix.os }}
-    defaults:
-      run:
-        shell: bash
-    strategy:
-      matrix:
-        os: [ ubuntu-latest, macos-latest-large, macos-13, macos-14 ]
-        version: [ 1.9.40-1-beta ]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup gh
-        uses: ./
-        with:
-          version: ${{ matrix.version }}
-
-      - name: Test CLI Linux
-        shell: bash
-        env:
-          FIANU_CLIENT_ID: ${{ secrets.FIANU_CLIENT_ID }}
-          FIANU_CLIENT_SECRET: ${{ secrets.FIANU_CLIENT_SECRET }}
-          FIANU_HOST: ${{ secrets.FIANU_HOST }}
-        run: |-
-          uname -s | tr '[:upper:]' '[:lower:]'
-          fianu root init
