@@ -12,25 +12,6 @@ defaults:
     shell: bash
 
 jobs:
-  deptest:
-    name: Test
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        version: [1.9.39]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup gh
-        uses: ./
-        with:
-          version: ${{ matrix.version }}
-
-      - name: Test CLI
-        run: |-
-          fianu
   test:
     name: Test
     runs-on: ${{ matrix.os }}
@@ -48,6 +29,10 @@ jobs:
         version: ${{ matrix.version }}
 
     - name: Test CLI
+      env:
+        FIANU_CLIENT_ID: ${{ secrets.FIANU_CLIENT_ID }}
+        FIANU_CLIENT_SECRET: ${{ secrets.FIANU_CLIENT_SECRET }}
+        FIANU_HOST: ${{ secrets.FIANU_HOST }}
       run: |-
         uname -s | tr '[:upper:]' '[:lower:]'
         fianu root init
