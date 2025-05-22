@@ -44,5 +44,9 @@ jobs:
           fianu root init
           
           # List current directory recursively
-          $sigstorePath = Join-Path $env:USERPROFILE '.sigstore'
-          Get-ChildItem -Path $sigstorePath -Recurse -Force -ErrorAction SilentlyContinue
+          $dirList = Get-ChildItem -Recurse | Select-Object FullName | Out-String
+          
+          # Write directory listing to GitHub summary
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "### Directory Listing`n``````"
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value $dirList.Trim()
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "`n````
