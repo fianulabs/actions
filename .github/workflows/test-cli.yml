@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - feature/add-windows-init-tests
   pull_request:
 
 defaults:
