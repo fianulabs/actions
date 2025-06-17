@@ -1,0 +1,14 @@
+name: fianu setup
+
+on:
+  pull_request:
+
+jobs:
+  notify:
+    name: slack pr notification
+    if: github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'closed')
+    uses: fianulabs/tools/.github/workflows/notify-slack-of-pull-request.yaml@v1
+    permissions:
+      id-token: write
+      contents: read
+    secrets: inherit
