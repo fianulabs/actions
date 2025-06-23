@@ -1,36 +1,76 @@
 # Fianu Gate Action
 
-This GitHub action by Fianu Labs integrates Fianu's gate check into your workflow, enabling automated enforcement of
-compliance, security, and quality gates. It's designed to ensure your codebase meets necessary standards before
-advancing through your CI/CD pipeline. The action supports configurable retries with exponential backoff for robust
-execution.
+GitHub Action to **check** or **enforce** Fianu Gates in your GitHub workflow.
 
-For detailed information on configuring and using gates, please visit
-the [Fianu Documentation on Gating](https://docs.fianu.io/gating/enforcement).
+## Overview
 
-## Branding
+This GitHub Action integrates Fianu Gates into your workflow to enforce or check security, compliance, and quality standards.
+Gates ensure your code and artifacts meet the configured policy requirements in Fianu before progressing through your CI/CD pipeline.
 
-- **Icon**: shield
-- **Color**: yellow
+For configuration and usage details, see the [Fianu Gating Documentation](https://docs.fianu.io/gating/gating).
+
+## Usage
+
+### Check a Fianu Gate
+
+Check a Fianu Gate without enforcing it. This is useful for validating the gate status **without blocking** the workflow.
+
+```yaml
+steps:
+  - name: Checkout
+    uses: actions/checkout@v4
+
+  - name: Fianu Gate
+    uses: fianulabs/actions/gate@main
+    with:
+      fianu_gate_name: ci.codereview.gate
+      fianu_gate_enforce: false  # gate will be checked, not enforced
+      fianu_client_id: ${{ secrets.FIANU_CLIENT_ID }}
+      fianu_client_secret: ${{ secrets.FIANU_CLIENT_SECRET }}
+      fianu_host: https://app.fianu.io
+      fianu_version: '1.9.41'
+      fianu_commit: ${{ github.sha }}
+```
+
+### Enforce a Fianu Gate
+
+Enforce a Fianu Gate and **fail the workflow** if the gate fails. This ensures only compliant code or artifacts proceed through the pipeline.
+
+```yaml
+steps:
+  - name: Checkout
+    uses: actions/checkout@v4
+
+  - name: Fianu Gate
+    uses: fianulabs/actions/gate@main
+    with:
+      fianu_gate_name: ci.codereview.gate
+      fianu_gate_enforce: true  # gate will be enforced (workflow will fail if the gate is not passed)
+      fianu_client_id: ${{ secrets.FIANU_CLIENT_ID }}
+      fianu_client_secret: ${{ secrets.FIANU_CLIENT_SECRET }}
+      fianu_host: https://app.fianu.io
+      fianu_version: '1.9.41'
+      fianu_commit: ${{ github.sha }}
+```
 
 ## Inputs
 
-| Name                         | Description                                                           | Required | Default       |
-|------------------------------|-----------------------------------------------------------------------|----------|---------------|
-| `fianu_client_id`            | Fianu client ID, usually stored in secrets.                           | Yes      |               |
-| `fianu_username`             | Fianu account username, usually stored in secrets.                    | No       |               |
-| `fianu_client_secret`        | Fianu client secret, usually stored in secrets.                       | Yes      |               |
-| `fianu_host`                 | The Fianu host URL.                                                   | Yes      |               |
-| `fianu_gate_name`            | The name of the gate to be checked.                                   | Yes      |               |
-| `fianu_gate_enforce`         | Whether to enforce the gate.                                          | No       | `false`       |
-| `fianu_opts`                 | Additional options for the fianu gate check command.                  | No       | `''`          |
-| `fianu_version`              | The version of the Fianu CLI to use.                                  | No       | `latest`      |
-| `fianu_artifact`             | The artifact name and version to be used in the gate check.           | No       |               |
-| `fianu_asset_uuid`           | The UUID of the asset to be used in the gate check (for commit only). | No       |               |
-| `fianu_commit`               | The commit hash to be used in the gate check.                         | No       | `$GITHUB_SHA` |
-| `max_attempts`               | Maximum number of retry attempts for the gate check command.          | No       | `5`           |
-| `initial_retry_wait`         | Initial wait time in seconds before retrying the command.             | No       | `5`           |
-| `backoff_factor`             | The factor by which the retry wait time will increase.                | No       | `2`           |
+| Name                  | Description                                                           | Required | Default       |
+|-----------------------|-----------------------------------------------------------------------|----------|---------------|
+| `fianu_client_id`     | Fianu client ID, usually stored in secrets.                           | Yes      |               |
+| `fianu_username`      | Fianu account username, usually stored in secrets.                    | No       |               |
+| `fianu_client_secret` | Fianu client secret, usually stored in secrets.                       | Yes      |               |
+| `fianu_host`          | The Fianu host URL.                                                   | Yes      |               |
+| `fianu_gate_name`     | The name of the gate to be checked.                                   | Yes      |               |
+| `fianu_gate_enforce`  | Whether to enforce the gate.                                          | No       | `false`       |
+| `fianu_opts`          | Additional options for the fianu gate check command.                  | No       | `''`          |
+| `fianu_version`       | The version of the Fianu CLI to use.                                  | No       | `latest`      |
+| `fianu_artifact`      | The artifact name and version to be used in the gate check.           | No       |               |
+| `fianu_asset_uuid`    | The UUID of the asset to be used in the gate check (for commit only). | No       |               |
+| `fianu_commit`        | The commit hash to be used in the gate check.                         | No       | `$GITHUB_SHA` |
+| `max_attempts`        | Maximum number of retry attempts for the gate check command.          | No       | `5`           |
+| `initial_retry_wait`  | Initial wait time in seconds before retrying the command.             | No       | `5`           |
+| `backoff_factor`      | The factor by which the retry wait time will increase.                | No       | `2`           |
 
 ## Outputs
 
@@ -43,33 +83,6 @@ the [Fianu Documentation on Gating](https://docs.fianu.io/gating/enforcement).
 | `gate_target_type`  | The type of the target (artifact or commit).              |
 | `gate_transactions` | The transaction IDs associated with the gate enforcement. |
 
-## Example Usage
-
-```yaml
-steps:
-  - name: Checkout
-    uses: actions/checkout@v4
-
-  - name: Setup Fianu
-    uses: fianulabs/actions@main
-    with:
-      version: ${{ secrets.FIANU_VERSION }}
-
-  - name: Fianu Gate
-    uses: fianulabs/actions/gate@main
-    with:
-      fianu_gate_name: ci.codereview.gate
-      fianu_gate_enforce: false  # gate will be checked, not enforced
-      fianu_client_id: ${{ secrets.FIANU_CLIENT_ID }}
-      fianu_client_secret: ${{ secrets.FIANU_CLIENT_SECRET }}
-      fianu_host: https://app.fianu.io
-      fianu_version: '1.9.11'
-      fianu_commit: ${{ github.sha }}
-      max_attempts: 3
-      initial_retry_wait: 5
-```
-
 ## Contact
 
-- [Fianu Labs GitHub Project](https://github.com/fianulabs)
 - [Fianu Labs Support](mailto:support@fianu.io)
