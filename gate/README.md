@@ -4,9 +4,54 @@ GitHub Action to **check** or **enforce** Fianu Gates in your GitHub workflow.
 
 ## Overview
 
-This GitHub Action integrates Fianu Gates into your workflow to enforce compliance, security, and quality standards.
+This GitHub Action integrates Fianu Gates into your workflow to enforce or check security, compliance, and quality standards.
+Gates ensure your code and artifacts meet the configured policy requirements in Fianu before progressing through your CI/CD pipeline.
 
-For details on configuring and using gates, see the [Fianu Documentation on Gating](https://docs.fianu.io/gating/gating).
+For configuration and usage details, see the [Fianu Gating Documentation](https://docs.fianu.io/gating/gating).
+
+## Usage
+
+### Check a Fianu Gate
+
+Check a Fianu Gate without enforcing it. This is useful for validating the gate status **without blocking** the workflow.
+
+```yaml
+steps:
+  - name: Checkout
+    uses: actions/checkout@v4
+
+  - name: Fianu Gate
+    uses: fianulabs/actions/gate@main
+    with:
+      fianu_gate_name: ci.codereview.gate
+      fianu_gate_enforce: false  # gate will be checked, not enforced
+      fianu_client_id: ${{ secrets.FIANU_CLIENT_ID }}
+      fianu_client_secret: ${{ secrets.FIANU_CLIENT_SECRET }}
+      fianu_host: https://app.fianu.io
+      fianu_version: '1.9.41'
+      fianu_commit: ${{ github.sha }}
+```
+
+### Enforce a Fianu Gate
+
+Enforce a Fianu Gate and **fail the workflow** if the gate fails. This ensures only compliant code or artifacts proceed through the pipeline.
+
+```yaml
+steps:
+  - name: Checkout
+    uses: actions/checkout@v4
+
+  - name: Fianu Gate
+    uses: fianulabs/actions/gate@main
+    with:
+      fianu_gate_name: ci.codereview.gate
+      fianu_gate_enforce: true  # gate will be enforced (workflow will fail if the gate is not passed)
+      fianu_client_id: ${{ secrets.FIANU_CLIENT_ID }}
+      fianu_client_secret: ${{ secrets.FIANU_CLIENT_SECRET }}
+      fianu_host: https://app.fianu.io
+      fianu_version: '1.9.41'
+      fianu_commit: ${{ github.sha }}
+```
 
 ## Inputs
 
@@ -37,46 +82,6 @@ For details on configuring and using gates, see the [Fianu Documentation on Gati
 | `gate_target`       | The target of the gate check or enforcement.              |
 | `gate_target_type`  | The type of the target (artifact or commit).              |
 | `gate_transactions` | The transaction IDs associated with the gate enforcement. |
-
-## Example Usage
-
-### Gate Check
-
-```yaml
-steps:
-  - name: Checkout
-    uses: actions/checkout@v4
-
-  - name: Fianu Gate
-    uses: fianulabs/actions/gate@main
-    with:
-      fianu_gate_name: ci.codereview.gate
-      fianu_gate_enforce: false  # gate will be checked, not enforced
-      fianu_client_id: ${{ secrets.FIANU_CLIENT_ID }}
-      fianu_client_secret: ${{ secrets.FIANU_CLIENT_SECRET }}
-      fianu_host: https://app.fianu.io
-      fianu_version: '1.9.41'
-      fianu_commit: ${{ github.sha }}
-```
-
-### Gate Enforce
-
-```yaml
-steps:
-  - name: Checkout
-    uses: actions/checkout@v4
-
-  - name: Fianu Gate
-    uses: fianulabs/actions/gate@main
-    with:
-      fianu_gate_name: ci.codereview.gate
-      fianu_gate_enforce: true  # gate will be enforced (workflow will fail if the gate is not passed)
-      fianu_client_id: ${{ secrets.FIANU_CLIENT_ID }}
-      fianu_client_secret: ${{ secrets.FIANU_CLIENT_SECRET }}
-      fianu_host: https://app.fianu.io
-      fianu_version: '1.9.41'
-      fianu_commit: ${{ github.sha }}
-```
 
 ## Contact
 
