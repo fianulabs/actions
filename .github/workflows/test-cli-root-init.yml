@@ -1,0 +1,61 @@
+name: Test Root Init
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  id-token: write
+  contents: write
+  packages: write
+  actions: write
+
+jobs:
+  test_windows:
+    defaults:
+      run:
+        shell: pwsh
+    name: Test Windows
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ windows-latest ]
+        version: [ 1.9.39 ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup gh
+        uses: ./
+        with:
+          version: ${{ matrix.version }}
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@main
+        with:
+          # pin to a version that includes TUF support
+          cosign-release: 'v2.5.0'
+
+      - name: Test CLI Windows
+        shell: pwsh
+        env:
+          FIANU_CLIENT_ID: ${{ secrets.FIANU_CLIENT_ID }}
+          FIANU_CLIENT_SECRET: ${{ secrets.FIANU_CLIENT_SECRET }}
+          FIANU_HOST: ${{ secrets.FIANU_HOST }}
+        run: |-
+          # Capture only stdout from the command
+          .\fianu.exe root init --root-path 'D:\a\actions\actions\fianu_root_certs\root.json' --mirror-path 'file:///a/actions/actions/fianu_root_certs'
+          .\fianu.exe root init
+                    
+          # Write to GitHub summary (optional)
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "`n### Fianu Output`n"
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "``````"
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "$fianuOutput"
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "``````"
+          # Also write to console log
+          $dirList = Get-ChildItem -Recurse | Select-Object FullName | Out-String
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "### Directory Listing`n``````"
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value $dirList.Trim()
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "`n``````"
