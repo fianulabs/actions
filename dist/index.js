@@ -89,7 +89,7 @@ async function run () {
             // Add to path
             await makeAvailableInPath(pathToCLI, version)
             return
-        } else if (isVersionLessThan(version, '1.9.49')) {
+        } else if (isVersionLessThan(version, '1.10.0')) {
             url = `https://storage.googleapis.com/fianu-release/${version}/dist`
         }
 
