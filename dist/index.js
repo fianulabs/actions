@@ -80,16 +80,19 @@ async function run () {
             return arch
         }
 
-        let url = `https://storage.googleapis.com/fianu-release-v1/fianucli/${version}/dist`
-
         // for backwards compatibility on older versions
-        if (isVersionLessThan(version, '1.9.55')) {
-            url = `https://storage.googleapis.com/fianu-release/${version}/fianu`
+        if (isVersionLessThan(version, '1.3.0')) {
+            let url = `https://storage.googleapis.com/fianu-release/${version}/fianu`
             const pathToCLI = await tc.downloadTool(url, '');
             // Add to path
             await makeAvailableInPath(pathToCLI, version)
             return
+        } else if (isVersionLessThan(version, '1.9.55')) {
+            url = `https://storage.googleapis.com/fianu-release/${version}/dist`
+        } else {
+            url = `https://storage.googleapis.com/fianu-release-v1/${version}/dist`
         }
+
 
         switch (platform) {
             case 'linux':
