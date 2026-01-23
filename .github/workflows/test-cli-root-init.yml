@@ -28,6 +28,7 @@ jobs:
           - 1.9.55
           - 1.9.56
           - 1.9.58
+          - 1.9.63
     steps:
       - name: Checkout
         uses: actions/checkout@v4
