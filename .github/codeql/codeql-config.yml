@@ -1,0 +1,13 @@
+name: "CodeQL config"
+
+# Preserve the extended query suite that the previous default setup used.
+queries:
+  - uses: security-extended
+
+# The dist/ and agent/dist/ directories are generated ncc bundles. They
+# contain third-party library code (e.g. uuid), not source we maintain, and
+# produce false positives such as js/biased-cryptographic-random in uuid's
+# hex stringify. Build artifacts should not be scanned.
+paths-ignore:
+  - dist
+  - agent/dist
