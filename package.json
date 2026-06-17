@@ -18,19 +18,23 @@
     "url": "git+https://github.com/fianulabs/actions.git"
   },
   "dependencies": {
-    "@actions/artifact": "^2.3.2",
-    "@actions/core": "^1.11.1",
-    "@actions/exec": "^1.1.1",
-    "@actions/github": "^6.0.0",
-    "@actions/glob": "^0.5.0",
-    "@actions/io": "^1.1.2",
-    "@actions/tool-cache": "^2.0.2",
-    "minimatch": "^9.0.3",
-    "uuid": "^11.1.0"
+    "@actions/artifact": "^5.0.3",
+    "@actions/core": "^2.0.3",
+    "@actions/exec": "^2.0.0",
+    "@actions/github": "^8.0.1",
+    "@actions/glob": "^0.5.1",
+    "@actions/io": "^2.0.0",
+    "@actions/tool-cache": "^3.0.1",
+    "minimatch": "^10.2.5",
+    "uuid": "^14.0.0"
   },
   "devDependencies": {
-    "@vercel/ncc": "^0.38.1",
+    "@vercel/ncc": "^0.44.0",
     "eslint": "^7.4.0",
     "jest": "^29.7.0"
+  },
+  "overrides": {
+    "js-yaml": "^4.2.0",
+    "undici": "^6.24.0"
   }
 }
