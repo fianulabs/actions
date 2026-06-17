@@ -25,7 +25,7 @@ inputs:
       Reference to the bom ref in the JSON output. This defaults to the path for CycloneDX. For SPDX
       the path is `.name`.
     required: false
-    default: '.metadata.component[\"bom-ref\"]'
+    default: '.metadata.component["bom-ref"]'
   manifest-cyber-host:
     description: |
       Manifest Cyber host.
@@ -68,25 +68,34 @@ runs:
     # Extract SBOM Reference from the Manifest Cyber SBOM Output
     - name: Extract SBOM Reference
       id: sbom
-      uses: sergeysova/jq-action@v2
-      with:
-        cmd: jq ${{ inputs.bom-ref-path }} ${{ inputs.manifest-cyber-sbom-output }} -r
+      shell: bash
+      env:
+        BOM_REF_PATH: ${{ inputs.bom-ref-path }}
+        SBOM_OUTPUT: ${{ inputs.manifest-cyber-sbom-output }}
+      run: |
+        value=$(jq "$BOM_REF_PATH" "$SBOM_OUTPUT" -r)
+        echo "value=$value" >> "$GITHUB_OUTPUT"
 
     - name: Prepare Fianu Options
       id: prepare
       shell: bash
+      env:
+        # Bind inputs/step outputs to env vars to avoid expanding untrusted
+        # values into the shell command text (CodeQL actions/code-injection).
+        SBOM_VALUE: ${{ steps.sbom.outputs.value }}
+        BOM_REF_PATH: ${{ inputs.bom-ref-path }}
       run: |
-        if [ -z "${{ steps.sbom.outputs.value }}" ]; then
+        if [ -z "$SBOM_VALUE" ]; then
           echo "Failed to extract SBOM reference from the Manifest Cyber SBOM output."
           exit 1
         fi
-        fianu declare --path 'manifest_cyber.sbom' --param 'bom-ref' --set "${{ steps.sbom.outputs.value }}"
+        fianu declare --path 'manifest_cyber.sbom' --param 'bom-ref' --set "$SBOM_VALUE"
         fianu config declarations
-        
-        if [ "${{ inputs.bom-ref-path }}" = ".name" ]; then
-          echo "SBOM_FORMAT=spdx-json" >> $GITHUB_ENV
+
+        if [ "$BOM_REF_PATH" = ".name" ]; then
+          echo "SBOM_FORMAT=spdx-json" >> "$GITHUB_ENV"
         else
-          echo "SBOM_FORMAT=cyclonedx-json" >> $GITHUB_ENV
+          echo "SBOM_FORMAT=cyclonedx-json" >> "$GITHUB_ENV"
         fi
 
     - name: Capture Blob Evidence

@@ -92,76 +92,71 @@ runs:
       id: fianu_gate
       shell: bash
       run: |
-        echo "gate_name=${{ inputs.fianu_gate_name }}" >> "$GITHUB_OUTPUT"
-        
+        echo "gate_name=$GATE_NAME" >> "$GITHUB_OUTPUT"
+
         # set the gate action based on the input enforce flag
-        if [ "${{ inputs.fianu_gate_enforce }}" == "true" ]; then
+        if [ "$GATE_ENFORCE" == "true" ]; then
           export gate_action="enforce"
         else
           export gate_action="check"
         fi
-        
+
         echo "gate_action=$gate_action" >> "$GITHUB_OUTPUT"
         echo "::group::fianu gate $gate_action"
-        
+
         gate_target=""
         # set the target type based on whether an artifact or commit hash is specified
-        if [ -n "${{ inputs.fianu_artifact }}" ]; then
-          echo "gate_target_type=artifact" >> $GITHUB_OUTPUT
-          echo "gate_target=${{ inputs.fianu_artifact }}" >> "$GITHUB_OUTPUT"
-          export gate_target="$gate_target --artifact ${{ inputs.fianu_artifact }}"
+        if [ -n "$GATE_ARTIFACT" ]; then
+          echo "gate_target_type=artifact" >> "$GITHUB_OUTPUT"
+          echo "gate_target=$GATE_ARTIFACT" >> "$GITHUB_OUTPUT"
+          export gate_target="$gate_target --artifact $GATE_ARTIFACT"
         fi
-        
+
         # add the commit flag if present
-        if [ -n "${{ inputs.fianu_commit }}" ]; then
-          echo "gate_target_type=commit" >> $GITHUB_OUTPUT
-          echo "gate_target=${{ inputs.fianu_commit }}" >> "$GITHUB_OUTPUT"
+        if [ -n "$GATE_COMMIT" ]; then
+          echo "gate_target_type=commit" >> "$GITHUB_OUTPUT"
+          echo "gate_target=$GATE_COMMIT" >> "$GITHUB_OUTPUT"
           unset FIANU_ARTIFACT FIANU_ARTIFACT_NAME FIANU_ARTIFACT_VERSION
-          export gate_target="$gate_target --commit ${{ inputs.fianu_commit }}"
+          export gate_target="$gate_target --commit $GATE_COMMIT"
         fi
-        
+
         # add the asset flag if present
-        if [ -n "${{ inputs.fianu_asset_uuid }}" ]; then
-          echo "gate_target_asset_uuid=${{ inputs.fianu_asset_uuid }}" >> "$GITHUB_OUTPUT"
-          export gate_target="$gate_target --asset ${{ inputs.fianu_asset_uuid }}"
+        if [ -n "$GATE_ASSET_UUID" ]; then
+          echo "gate_target_asset_uuid=$GATE_ASSET_UUID" >> "$GITHUB_OUTPUT"
+          export gate_target="$gate_target --asset $GATE_ASSET_UUID"
         fi
-        
-        echo "Gate: name=${{ inputs.fianu_gate_name }} action=$gate_action target=$gate_target"
-        
-        echo "::debug::Gate Command: fianu gate $gate_action --gate ${{ inputs.fianu_gate_name }} $gate_target ${{ inputs.fianu_opts }}"
-        
-        # echo "### Fianu Gate Command" >> $GITHUB_STEP_SUMMARY
-        # echo '```bash' >> $GITHUB_STEP_SUMMARY
-        # echo "fianu gate $gate_action --gate ${{ inputs.fianu_gate_name }} $gate_target ${{ inputs.fianu_opts }}" >> $GITHUB_STEP_SUMMARY
-        # echo '```' >> $GITHUB_STEP_SUMMARY
+
+        echo "Gate: name=$GATE_NAME action=$gate_action target=$gate_target"
+
+        echo "::debug::Gate Command: fianu gate $gate_action --gate $GATE_NAME $gate_target $GATE_OPTS"
 
         # initialize retry parameters
-        max_attempts=${{ inputs.max_attempts }}
-        retry_wait=${{ inputs.initial_retry_wait }}
-        backoff_factor=${{ inputs.backoff_factor }}
+        max_attempts=$MAX_ATTEMPTS
+        retry_wait=$INITIAL_RETRY_WAIT
+        backoff_factor=$BACKOFF_FACTOR
         attempt=0
-        
+
         sleep 5  # initial delay to allow time for required controls to be evaluated
 
         # retry logic for gate check or enforcement
         while [ $attempt -lt $max_attempts ]; do
           echo "fianu gate $gate_action attempt $(( attempt + 1 )) of $max_attempts..."
 
-          if fianu gate $gate_action --gate "${{ inputs.fianu_gate_name }}" $gate_target ${{ inputs.fianu_opts }} 2>/dev/null >/dev/null; then
-            echo "fianu gate $gate_action succeeded: ${{ inputs.fianu_gate_name }}"
-            transactions_ids=$(fianu gate $gate_action --gate "${{ inputs.fianu_gate_name }}" $gate_target -f json ${{ inputs.fianu_opts }} | sed 's/\x1b\[[0-9;]*m//g' | jq -r '[.[].notes.attestation.parent.uuid]' | tr '\n' ' ' | jq -c)
+          if fianu gate $gate_action --gate "$GATE_NAME" $gate_target $GATE_OPTS 2>/dev/null >/dev/null; then
+            echo "fianu gate $gate_action succeeded: $GATE_NAME"
+            transactions_ids=$(fianu gate $gate_action --gate "$GATE_NAME" $gate_target -f json $GATE_OPTS | sed 's/\x1b\[[0-9;]*m//g' | jq -r '[.[].notes.attestation.parent.uuid]' | tr '\n' ' ' | jq -c)
             # echo "transactions_ids=$transactions_ids"
             echo "gate_transactions=$transactions_ids" >> "$GITHUB_OUTPUT"
             echo "gate_result=success" >> "$GITHUB_OUTPUT"
             break
           fi
-        
+
           echo "::warning::fianu gate $gate_action attempt $(( attempt + 1 )) of $max_attempts failed - retrying in $retry_wait seconds..."
           attempt=$(( attempt + 1 ))
           sleep $retry_wait
           retry_wait=$(echo "$retry_wait * $backoff_factor" | bc)
         done
-        
+
         # final check if maximum attempts were reached
         if [ $attempt -eq $max_attempts ]; then
           echo "::error::fianu gate $gate_action failed after $max_attempts attempts."
@@ -176,3 +171,16 @@ runs:
         FIANU_CLIENT_SECRET: ${{ inputs.fianu_client_secret }}
         FIANU_HOST: ${{ inputs.fianu_host }}
         FIANU_VERSION: ${{ inputs.fianu_version }}
+        # Bind action inputs to env vars so they are not expanded into the
+        # shell command text (prevents command injection — CodeQL
+        # actions/code-injection). Quote on use; GATE_OPTS stays unquoted
+        # because it intentionally carries multiple word-split CLI flags.
+        GATE_NAME: ${{ inputs.fianu_gate_name }}
+        GATE_ENFORCE: ${{ inputs.fianu_gate_enforce }}
+        GATE_ARTIFACT: ${{ inputs.fianu_artifact }}
+        GATE_COMMIT: ${{ inputs.fianu_commit }}
+        GATE_ASSET_UUID: ${{ inputs.fianu_asset_uuid }}
+        GATE_OPTS: ${{ inputs.fianu_opts }}
+        MAX_ATTEMPTS: ${{ inputs.max_attempts }}
+        INITIAL_RETRY_WAIT: ${{ inputs.initial_retry_wait }}
+        BACKOFF_FACTOR: ${{ inputs.backoff_factor }}

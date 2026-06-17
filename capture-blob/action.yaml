@@ -61,8 +61,11 @@ runs:
     # Preliminary check for fianu-service-account or identity-token
     - name: Check for Required Authentication
       shell: bash
+      env:
+        FIANU_SERVICE_ACCOUNT: ${{ inputs.fianu-service-account }}
+        IDENTITY_TOKEN: ${{ inputs.identity-token }}
       run: |
-        if [ -z "${{ inputs.fianu-service-account }}" ] && [ -z "${{ inputs.identity-token }}" ]; then
+        if [ -z "$FIANU_SERVICE_ACCOUNT" ] && [ -z "$IDENTITY_TOKEN" ]; then
           echo "error: either fianu-service-account or identity-token must be provided." >&2
           exit 1
         fi
@@ -72,7 +75,7 @@ runs:
     - name: Google Cloud Authentication Setup
       id: gcloud_auth
       if: ${{ inputs.fianu-service-account }}
-      uses: google-github-actions/auth@v2
+      uses: google-github-actions/auth@c200f3691d83b41bf9bbd8638997a462592937ed # v2
       with:
         token_format: id_token
         id_token_audience: ${{ inputs.audience }}
@@ -85,14 +88,14 @@ runs:
     - name: Google Cloud CLI Installation
       id: setup_gcloud
       if: success()
-      uses: google-github-actions/setup-gcloud@v2
+      uses: google-github-actions/setup-gcloud@e427ad8a34f8676edf47cf7d7925499adf3eb74f # v2
       with:
         project_id: ${{ steps.gcloud_auth.outputs.project_id }}
 
     # Install Cosign CLI
     # Reference: https://github.com/sigstore/cosign-installer
     - name: Install Cosign
-      uses: sigstore/cosign-installer@v3.5.0
+      uses: sigstore/cosign-installer@59acb6260d9c0ba8f4a2f9d9b48431a222b68e20 # v3.5.0
       if: success()
 
     # Sign and Capture SBOM Evidence
@@ -111,41 +114,43 @@ runs:
         FIANU_LEDGER_MIRROR: ${{ inputs.fianu-host }}/ledger/root
         FIANU_LEDGER_ROOT: ${{ inputs.fianu-host }}/ledger/root/root.json
         IDENTITY_TOKEN: ${{ inputs.identity-token || steps.gcloud_auth.outputs.id_token }}
+        # Bind inputs to env vars so they are not expanded into the shell
+        # command text (prevents command injection — CodeQL
+        # actions/code-injection). Quote on use; ${opts} stays unquoted as it
+        # carries multiple word-split CLI flags.
+        EVIDENCE: ${{ inputs.evidence }}
+        EVIDENCE_FORMAT: ${{ inputs.evidence-format }}
+        EVIDENCE_SOURCE: ${{ inputs.evidence-source }}
+        EVIDENCE_URI: ${{ inputs.evidence-uri }}
+        FIANU_DEBUG: ${{ inputs.fianu-debug }}
       run: |-
         # Initialize Cosign with the Fianu root key file and repository mirror.
-        cosign initialize --mirror "${{ env.FIANU_LEDGER_MIRROR }}" --root "${{ env.FIANU_LEDGER_ROOT }}"
+        cosign initialize --mirror "$FIANU_LEDGER_MIRROR" --root "$FIANU_LEDGER_ROOT"
 
         # Sign the SBOM with Cosign, generate a Rekor Bundle, and output the Digest
-        cosign sign-blob --yes "${{ inputs.evidence }}" \
+        cosign sign-blob --yes "$EVIDENCE" \
           --bundle "bundle.json" \
-          --rekor-url "${{ env.FIANU_REKOR_URL }}" \
-          --identity-token="${{ env.IDENTITY_TOKEN }}" \
-          --fulcio-url "${{ env.FIANU_FULCIO_URL }}"
-        
+          --rekor-url "$FIANU_REKOR_URL" \
+          --identity-token="$IDENTITY_TOKEN" \
+          --fulcio-url "$FIANU_FULCIO_URL"
+
         opts=""
-        if [ ! -z ${{ inputs.evidence-format }} ]; then
-          opts="$opts --format ${{ inputs.evidence-format }}"
+        if [ -n "$EVIDENCE_FORMAT" ]; then
+          opts="$opts --format $EVIDENCE_FORMAT"
         fi
-        
-        if [ ${{ inputs.fianu-debug }} == "true" ]; then
+
+        if [ "$FIANU_DEBUG" == "true" ]; then
           opts="$opts -d"
         fi
-        
+
         # remove spaces from the beginning and end of the variable
         opts="${opts##*( )}"
         opts="${opts%%*( )}"
-        
-        # Capture the Generated Bundle with Fianu
-        # {
-        #   echo "### Fianu Capture Evidence (Blob)"
-        #   echo '```bash'
-        #   echo "fianu capture evidence --input bundle.json --type blob --source ${{ inputs.evidence-source }} --resource-uri ${{ inputs.evidence-uri }} ${opts}"
-        #   echo '```'
-        # } >> $GITHUB_STEP_SUMMARY
 
-        fianu capture evidence --input bundle.json --type blob --source "${{ inputs.evidence-source }}" --resource-uri "${{ inputs.evidence-uri }}" ${opts}
-        
-        if [ $? -ne 0 ]; then 
+        # Capture the Generated Bundle with Fianu
+        fianu capture evidence --input bundle.json --type blob --source "$EVIDENCE_SOURCE" --resource-uri "$EVIDENCE_URI" ${opts}
+
+        if [ $? -ne 0 ]; then
           echo "error: failed to capture evidence with Fianu CLI." >&2
           exit 1
         fi
