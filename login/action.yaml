@@ -1,0 +1,58 @@
+name: 'Fianu Login Action'
+author: 'Fianu Labs'
+description: |
+  Authenticates to Fianu from a GitHub Actions workflow using GitHub's OIDC
+  token (Workload Identity Federation) — no static client secrets required.
+  The action installs the Fianu CLI, exchanges the GitHub OIDC token for a
+  Fianu access token, and persists it to `~/.fianu/fianu.conf.v1`. Subsequent
+  steps (other `fianu` commands, or the `fianulabs/fianu` Terraform provider)
+  then authenticate off that file with no further credentials.
+
+  The calling job MUST grant `permissions: id-token: write` so GitHub will mint
+  the OIDC token.
+branding:
+  icon: 'log-in'
+  color: 'yellow'
+inputs:
+  fianu_host:
+    description: 'The Fianu host URL (usually stored in secrets)'
+    required: true
+  fianu_organization:
+    description: 'Fianu organization slug for the WIF exchange (defaults to the repository owner)'
+    required: false
+  fianu_audience:
+    description: 'OIDC audience for the GitHub token request (defaults to the server URL + owner)'
+    required: false
+  fianu_client_id:
+    description: 'Optional Fianu client ID to scope the federated exchange'
+    required: false
+  fianu_version:
+    description: 'The version of the Fianu CLI to use'
+    required: false
+    default: '1.9.75'
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Fianu
+      id: setup_fianu
+      uses: fianulabs/actions@main
+      with:
+        version: ${{ inputs.fianu_version }}
+
+    - name: Fianu Federated Login
+      id: fianu_login
+      shell: bash
+      env:
+        FIANU_HOST: ${{ inputs.fianu_host }}
+        FIANU_ORGANIZATION: ${{ inputs.fianu_organization }}
+        FIANU_OIDC_AUDIENCE: ${{ inputs.fianu_audience }}
+        FIANU_CLIENT_ID: ${{ inputs.fianu_client_id }}
+      run: |
+        echo "::group::fianu auth login (federated)"
+        # The CLI auto-fetches the GitHub OIDC token from the
+        # ACTIONS_ID_TOKEN_REQUEST_* env vars (present when the job has
+        # `permissions: id-token: write`), exchanges it via WIF, and writes
+        # the resulting Fianu token to ~/.fianu/fianu.conf.v1.
+        fianu auth login
+        echo "::endgroup::"
