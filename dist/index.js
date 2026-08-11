@@ -12,7 +12,6 @@ const exec = __nccwpck_require__(5236);
 // External
 const core = __nccwpck_require__(7484);
 const tc = __nccwpck_require__(3472);
-const url = __nccwpck_require__(3136);
 
 // arch in [arm, x32, x64...] (https://nodejs.org/api/os.html#os_os_arch)
 // return value in [amd64, 386, arm]
@@ -93,8 +92,9 @@ async function run () {
         }
 
         // for backwards compatibility on older versions
+        let url;
         if (isVersionLessThan(version, '1.3.0')) {
-            let url = `https://storage.googleapis.com/fianu-release/${version}/fianu`
+            url = `https://storage.googleapis.com/fianu-release/${version}/fianu`
             const pathToCLI = await tc.downloadTool(url, '');
             // Add to path
             await makeAvailableInPath(pathToCLI, version)
