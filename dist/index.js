@@ -124,10 +124,10 @@ async function run () {
         switch (platform) {
             case 'linux':
             case 'darwin':
-                pathToCLI = await tc.downloadTool(url, 'fianu');
+                pathToCLI = await tc.downloadTool(url);
                 break;
             case 'windows':
-                pathToCLI = await tc.downloadTool(url, 'fianu.exe');
+                pathToCLI = await tc.downloadTool(url);
                 break;
         }
 
@@ -140,6 +140,7 @@ async function run () {
 }
 
 module.exports = run;
+
 
 /***/ }),
 
