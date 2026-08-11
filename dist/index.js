@@ -12,6 +12,7 @@ const exec = __nccwpck_require__(5236);
 // External
 const core = __nccwpck_require__(7484);
 const tc = __nccwpck_require__(3472);
+const url = __nccwpck_require__(3136);
 
 // arch in [arm, x32, x64...] (https://nodejs.org/api/os.html#os_os_arch)
 // return value in [amd64, 386, arm]
@@ -127,7 +128,7 @@ async function run () {
                 pathToCLI = await tc.downloadTool(url);
                 break;
             case 'windows':
-                pathToCLI = await tc.downloadTool(url);
+                pathToCLI = await tc.downloadTool(url, 'fianu.exe');
                 break;
         }
 
