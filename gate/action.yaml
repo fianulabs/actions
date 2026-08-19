@@ -32,7 +32,7 @@ inputs:
   fianu_version:
     description: 'The version of the Fianu CLI to use'
     required: false
-    default: '1.9.75'
+    default: '1.9.77'
   fianu_artifact:
     description: 'The artifact name and version to be used in the gate check'
     required: false
