@@ -27,6 +27,6 @@ steps:
 
 | Name      | Description                        | Default  |
 |-----------|------------------------------------|----------|
-| `version` | The version of `fianu` to install. | `1.10.46` |
+| `version` | The version of `fianu` to install. | `1.9.81` |
 
 Set `version: latest` to install the newest published release; it is resolved to a concrete version at run time.

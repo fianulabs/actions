@@ -28,7 +28,7 @@ steps:
       fianu_client_id: ${{ secrets.FIANU_CLIENT_ID }}
       fianu_client_secret: ${{ secrets.FIANU_CLIENT_SECRET }}
       fianu_host: https://app.fianu.io
-      fianu_version: '1.10.46'
+      fianu_version: '1.9.81'
       fianu_commit: ${{ github.sha }}
 ```
 
@@ -49,7 +49,7 @@ steps:
       fianu_client_id: ${{ secrets.FIANU_CLIENT_ID }}
       fianu_client_secret: ${{ secrets.FIANU_CLIENT_SECRET }}
       fianu_host: https://app.fianu.io
-      fianu_version: '1.10.46'
+      fianu_version: '1.9.81'
       fianu_commit: ${{ github.sha }}
 ```
 
@@ -64,7 +64,7 @@ steps:
 | `fianu_gate_name`     | The name of the gate to be checked.                                   | Yes      |               |
 | `fianu_gate_enforce`  | Whether to enforce the gate.                                          | No       | `false`       |
 | `fianu_opts`          | Additional options for the fianu gate check command.                  | No       | `''`          |
-| `fianu_version`       | The version of the Fianu CLI to use.                                  | No       | `1.10.46`     |
+| `fianu_version`       | The version of the Fianu CLI to use.                                  | No       | `1.9.81`     |
 | `fianu_artifact`      | The artifact name and version to be used in the gate check.           | No       |               |
 | `fianu_asset_uuid`    | The UUID of the asset to be used in the gate check (for commit only). | No       |               |
 | `fianu_commit`        | The commit hash to be used in the gate check.                         | No       | `$GITHUB_SHA` |

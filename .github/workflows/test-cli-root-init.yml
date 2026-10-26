@@ -32,6 +32,9 @@ jobs:
           - 1.9.66
           - 1.9.73
           - 1.9.75
+          - 1.9.76  # R2 from here on
+          - 1.9.81
+          - latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
