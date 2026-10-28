@@ -4,7 +4,12 @@ inputs:
   version:
     description: Version of Fianu CLI to install
     required: false
-    default: 1.9.77
+    default: 1.9.81
+outputs:
+  version:
+    description: Concrete Fianu CLI version installed (`latest` resolved)
+  download-url:
+    description: URL the Fianu CLI was downloaded from
 runs:
   using: node20
   main: dist/index.js

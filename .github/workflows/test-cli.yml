@@ -20,7 +20,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        version: [ 1.2.2, 1.9.0, 1.9.1, 1.9.2, 1.9.5, 1.9.6, 1.9.7, 1.9.8, 1.9.35, 1.9.39, 1.9.40-1-beta, 1.9.55, 1.9.56, 1.9.63, 1.9.66, 1.9.67, 1.9.73, 1.9.75, 1.9.77 ]
+        version: [ 1.2.2, 1.9.0, 1.9.1, 1.9.2, 1.9.5, 1.9.6, 1.9.7, 1.9.8, 1.9.35, 1.9.39, 1.9.40-1-beta, 1.9.55, 1.9.56, 1.9.63, 1.9.66, 1.9.67, 1.9.73, 1.9.75, 1.9.76, 1.9.77, 1.9.81, latest ]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -38,8 +38,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-latest, windows-latest, macos-latest-large, macos-13, macos-14 ]
-        version: [ 1.3.0, 1.9.11, 1.9.35, 1.9.39, 1.9.40-1-beta, 1.9.55, 1.9.56, 1.9.66, 1.9.67, 1.9.73, 1.9.75, 1.9.77 ]
+        os: [ ubuntu-latest, windows-latest, macos-latest-large, macos-14 ]
+        version: [ 1.3.0, 1.9.11, 1.9.35, 1.9.39, 1.9.40-1-beta, 1.9.55, 1.9.56, 1.9.66, 1.9.67, 1.9.73, 1.9.75, 1.9.76, 1.9.77, 1.9.81, latest ]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -65,3 +65,52 @@ jobs:
         run: |-
           uname -s | tr '[:upper:]' '[:lower:]'
           fianu
+
+  # Proves R2 is actually the download host for versions >= 1.9.76 (the
+  # matrices above only prove the CLI runs), and that `latest` resolves to
+  # the version in the R2 pointer file.
+  r2:
+    name: R2
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-14 ]
+        version: [ 1.9.76, 1.9.81, latest ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup fianu
+        id: setup
+        uses: ./
+        with:
+          version: ${{ matrix.version }}
+
+      - name: Assert downloaded from R2
+        env:
+          INPUT: ${{ matrix.version }}
+          VERSION: ${{ steps.setup.outputs.version }}
+          URL: ${{ steps.setup.outputs.download-url }}
+        run: |-
+          set -euo pipefail
+          echo "version=$VERSION url=$URL"
+          case "$URL" in
+            https://releases.fianu.io/fianucli/"$VERSION"/dist/*) ;;
+            *) echo "::error::expected an R2 URL for $VERSION, got $URL"; exit 1 ;;
+          esac
+          if [ "$INPUT" = latest ]; then
+            want="$(curl -fsS https://releases.fianu.io/fianucli/channels/latest | tr -d '[:space:]')"
+            [ "$VERSION" = "$want" ] || { echo "::error::latest resolved to $VERSION, pointer says $want"; exit 1; }
+          else
+            [ "$VERSION" = "$INPUT" ] || { echo "::error::asked for $INPUT, installed $VERSION"; exit 1; }
+          fi
+          curl -fsSI "$URL" | grep -i '^server: cloudflare'
+
+      - name: Run CLI
+        if: ${{ matrix.os != 'windows-latest' }}
+        run: fianu
+
+      - name: Run CLI Windows
+        if: ${{ matrix.os == 'windows-latest' }}
+        shell: pwsh
+        run: fianu
